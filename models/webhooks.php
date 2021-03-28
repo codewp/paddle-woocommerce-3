@@ -25,18 +25,20 @@ class Paddle_WC_Webhooks {
     public function webhook() {
         $this->set_status_header( 500 );
 
-        if ( ! Paddle_WC_API::check_webhook_signature() ) {
+        if ( 1 != Paddle_WC_API::check_webhook_signature() ) {
             status_header( $this->status_header );
             exit;
         }
 
         $action = isset( $_POST['alert_name '] ) ? sanitize_text_field( $_POST['alert_name '] ) : '';
 
-        if ( is_callable( array( $this, $action ) ) ) {
+        if ( ! empty( $action ) && is_callable( array( $this, $action ) ) ) {
             $this->{$action}();
         }
 
-        do_action( 'paddle_wc_webhook_' . $action );
+        if ( ! empty( $action ) ) {
+            do_action( 'paddle_wc_webhook_' . $action );
+        }
 
         status_header( $this->status_header );
 
