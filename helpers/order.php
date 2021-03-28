@@ -34,12 +34,12 @@ function paddle_wc_get_order_by_passthrough( $passthrough ) {
         return false;
     }
 
-    $passthrough = maybe_unserialize( $passthrough );
-    if ( empty( $passthrough ) || empty( $passthrough['order_id'] ) || 0 >= (int) $passthrough['order_id'] ) {
+    $passthrough = json_decode( base64_decode( $passthrough ) );
+    if ( empty( $passthrough ) || ! isset( $passthrough->order_id ) || 0 >= (int) $passthrough->order_id ) {
         return false;
     }
 
-    return new WC_Order( (int) $passthrough['order_id'] );
+    return new WC_Order( (int) $passthrough->order_id );
 }
 
 /**
