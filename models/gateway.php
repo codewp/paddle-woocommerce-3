@@ -168,14 +168,9 @@ class Paddle_WC_Gateway extends WC_Payment_Gateway {
 	public function on_paddle_payment_webhook_response() {
 		if (Paddle_WC_API::check_webhook_signature()) {
 			$order_id = $_GET['order_id'];
-			$paddle_order_id = isset( $_POST['order_id'] ) ? sanitize_text_field( $_POST['order_id'] ) : '';
 			if (is_numeric($order_id) && (int) $order_id == $order_id) {
 				$order = new WC_Order($order_id);
 				if (is_object($order) && $order instanceof WC_Order) {
-					if ( ! empty( $paddle_order_id ) ) {
-						$order->add_meta_data( '_paddle_order_id', $paddle_order_id, true );
-						$order->add_order_note( 'Paddle Order ID: ' . $paddle_order_id );
-					}
 					$order->payment_complete();
 					status_header(200);
 					exit;

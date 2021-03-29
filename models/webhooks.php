@@ -45,6 +45,20 @@ class Paddle_WC_Webhooks {
         exit;
     }
 
+    public function payment_succeeded() {
+        $paddle_order_id = isset( $_POST['order_id'] ) ? sanitize_text_field( $_POST['order_id'] ) : '';
+        $order           = ! empty( $_POST['passthrough'] ) ? paddle_wc_get_order_by_passthrough( $_POST['passthrough'] ) : false;
+
+        if ( empty( $paddle_order_id ) || ! $order ) {
+            $this->set_status_header( 200 );
+            return;
+        }
+
+        $order->add_meta_data( '_paddle_order_id', $paddle_order_id, true );
+        $order->add_order_note( 'Paddle Order ID: ' . $paddle_order_id );
+        $this->set_status_header( 200 );
+    }
+
     public function payment_refunded() {
         if ( ! isset( $_POST['refund_type'] ) || 'full' !== $_POST['refund_type'] ) {
             return;

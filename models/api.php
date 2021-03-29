@@ -34,10 +34,8 @@ class Paddle_WC_API {
 		$data['customer_email']        = $order->get_billing_email();
 		$data['customer_postcode']     = $customer->get_billing_postcode();
 		$data['customer_country']      = $customer->get_billing_country();
+		$data['passthrough']           = base64_encode( json_encode( array( 'order_id' => $order->get_id() ) ) );
 
-		$passthrough = array(
-			'order_id' => $order->get_id(),
-		);
 		// Add the product name(s) as custom message
 		if($settings->get('send_names') == 'yes') {
 			$passthrough['products'] = array();
@@ -45,15 +43,10 @@ class Paddle_WC_API {
 			$names = array();
 			foreach($items as $item) {
 				$names[] = $item['name'];
-				$passthrough['products'][] = array(
-					'id'   => $item['product_id'],
-					'name' => $item['name'],
-				); //so that you can trace the order history later directly from paddle dashboard
 			}
 			$data['custom_message'] = implode(', ', array_unique($names));
 			$data['title'] = implode(', ', array_unique($names));
 		}
-		$data['passthrough'] = base64_encode( json_encode( $passthrough ) );
 
 		// Get pay link from Paddle API
 		$post_url = Paddle_WC_Settings::PADDLE_ROOT_URL . Paddle_WC_Settings::API_GENERATE_PAY_LINK_URL;
