@@ -24,7 +24,7 @@ class Paddle_WC_Webhooks {
             exit;
         }
 
-        $action = isset( $_POST['alert_name '] ) ? sanitize_key( $_POST['alert_name '] ) : '';
+        $action = isset( $_POST['alert_name'] ) ? sanitize_key( $_POST['alert_name'] ) : '';
 
         if ( ! empty( $action ) && is_callable( array( $this, $action ) ) ) {
             $this->{$action}();
