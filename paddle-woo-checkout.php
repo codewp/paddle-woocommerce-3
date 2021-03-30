@@ -56,6 +56,15 @@ final class Paddle_WC {
 	public $webhooks;
 
 	/**
+	 * Logger.
+	 *
+	 * @var WC_Logger
+	 */
+	public $log;
+
+	public $log_enabled = true;
+
+	/**
 	 * Main Paddle_WC Instance.
 	 * Ensures only one instance of WooCommerce is loaded or can be loaded.
 	 *
@@ -101,6 +110,8 @@ final class Paddle_WC {
 			// Register the Paddle gateway with WC
 			add_filter('woocommerce_payment_gateways', array($this, 'on_register_woocommerce_gateways'));
 
+			$this->log = wc_get_logger();
+
 			// Add the checkout scripts and actions, if enabled
 			$this->settings = new Paddle_WC_Settings();
 			if($this->settings->get('enabled') == 'yes') {
@@ -115,7 +126,7 @@ final class Paddle_WC {
 			$this->gateway = new Paddle_WC_Gateway($this->settings);
 			$this->gateway->register_callbacks();
 
-			$this->webhooks = new Paddle_WC_Webhooks( wc_get_logger() );
+			$this->webhooks = new Paddle_WC_Webhooks();
 			$this->webhooks->init();
 		}
 	}

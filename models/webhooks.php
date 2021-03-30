@@ -3,16 +3,7 @@ defined( 'ABSPATH' ) or exit;
 
 class Paddle_WC_Webhooks {
 
-    protected $log;
-
-    protected $log_enabled;
-
     protected $status_header = 500;
-
-    public function __construct( WC_Logger $log, $log_enabled = true ) {
-        $this->log         = $log;
-        $this->log_enabled = $log_enabled;
-    }
 
     public function init() {
         add_action( 'woocommerce_api_paddle_webhook', array( $this, 'webhook' ) );
@@ -26,14 +17,19 @@ class Paddle_WC_Webhooks {
         $this->set_status_header( 500 );
 
         if ( 1 != Paddle_WC_API::check_webhook_signature() ) {
+            if ( paddle_wc()->log_enabled ) {
+                paddle_wc()->log->error( 'Paddle webhook wrong signature.', array( 'source' => 'paddle' ) );
+            }
             status_header( $this->status_header );
             exit;
         }
 
-        $action = isset( $_POST['alert_name '] ) ? sanitize_text_field( $_POST['alert_name '] ) : '';
+        $action = isset( $_POST['alert_name '] ) ? sanitize_key( $_POST['alert_name '] ) : '';
 
         if ( ! empty( $action ) && is_callable( array( $this, $action ) ) ) {
             $this->{$action}();
+        } elseif ( paddle_wc()->log_enabled ) {
+            paddle_wc()->log->error( 'Unsupported webhook action: ' . $action, array( 'source' => 'paddle' ) );
         }
 
         if ( ! empty( $action ) ) {
@@ -47,9 +43,13 @@ class Paddle_WC_Webhooks {
 
     public function payment_succeeded() {
         $paddle_order_id = isset( $_POST['order_id'] ) ? sanitize_text_field( $_POST['order_id'] ) : '';
-        $order           = ! empty( $_POST['passthrough'] ) ? paddle_wc_get_order_by_passthrough( $_POST['passthrough'] ) : false;
+        $passthrough     = ! empty( $_POST['passthrough'] ) ? sanitize_text_field( $_POST['passthrough'] ) : '';
+        $order           = ! empty( $passthrough ) ? paddle_wc_get_order_by_passthrough( $passthrough ) : false;
 
         if ( empty( $paddle_order_id ) || ! $order ) {
+            if ( paddle_wc()->log_enabled ) {
+                paddle_wc()->log->error( 'Paddle payment success order not found for Paddle order #' . $paddle_order_id . ' and passthrough: ' . $passthrough . '.', array( 'source' => 'paddle' ) );
+            }
             $this->set_status_header( 200 );
             return;
         }
@@ -68,8 +68,8 @@ class Paddle_WC_Webhooks {
         $passthrough     = isset( $_POST['passthrough'] ) ? $_POST['passthrough'] : '';
         $order           = paddle_wc_get_order( $passthrough, $paddle_order_id );
         if ( ! $order ) {
-            if ( $this->log_enabled ) {
-                $this->log->warning( 'Could not find an order related to Paddle order #' . sanitize_key( $paddle_order_id ) . ' to refund it, please take an appropriate action.', array( 'source' => 'paddle' ) );
+            if ( paddle_wc()->log_enabled ) {
+                paddle_wc()->log->warning( 'Could not find an order related to Paddle order #' . $paddle_order_id . ' to refund it, please take an appropriate action.', array( 'source' => 'paddle' ) );
             }
             $this->set_status_header( 200 );
             return;
@@ -78,13 +78,13 @@ class Paddle_WC_Webhooks {
         $refunded = $order->update_status( 'refunded', 'Refunded from Paddle.' );
 
         if ( $refunded ) {
-            if ( $this->log_enabled ) {
-                $this->log->info( 'Order #' . sanitize_key( $order->get_id() ) . ' related to Paddle order #' . sanitize_key( $paddle_order_id ) . ' refunded successfully.', array( 'source' => 'paddle' ) );
+            if ( paddle_wc()->log_enabled ) {
+                paddle_wc()->log->info( 'Order #' . sanitize_key( $order->get_id() ) . ' related to Paddle order #' . $paddle_order_id . ' refunded successfully.', array( 'source' => 'paddle' ) );
             }
             do_action( 'paddle_wc_payment_refunded_successfully', $paddle_order_id, $order );
             $this->set_status_header( 200 );
-        } elseif ( $this->log_enabled ) {
-            $this->log->warning( 'Paddle order #' . sanitize_key( $paddle_order_id ) . ' refunded on paddle but could not be refunded on WooCommerce, so please take appropriate action.', array( 'source' => 'paddle' ) );
+        } elseif ( paddle_wc()->log_enabled ) {
+            paddle_wc()->log->warning( 'Paddle order #' . $paddle_order_id  . ' refunded on paddle but could not be refunded on WooCommerce, so please take appropriate action.', array( 'source' => 'paddle' ) );
         }
     }
 
