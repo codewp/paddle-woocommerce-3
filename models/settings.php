@@ -52,9 +52,9 @@ class Paddle_WC_Settings
 		return $this->settings;
 	}
 
-	public function get($key)
+	public function get($key, $default = false)
 	{
-		return $this->settings[$key];
+		return isset( $this->settings[ $key ] ) ? $this->settings[ $key ] : $default;
 	}
 
 	public function set($key, $value)

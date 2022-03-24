@@ -48,6 +48,13 @@ class Paddle_WC_API {
 			$data['title'] = implode(', ', array_unique($names));
 		}
 
+		// Add subscription paln if exist.
+		$subscription_plan_id = $settings->get( 'subscription_plan_id', '' );
+		if ( ! empty( $subscription_plan_id ) ) {
+			$data['product_id'] = sanitize_text_field( $subscription_plan_id );
+			$data['recurring_prices'] = $data['prices'];
+		}
+
 		// Get pay link from Paddle API
 		$post_url = Paddle_WC_Settings::PADDLE_ROOT_URL . Paddle_WC_Settings::API_GENERATE_PAY_LINK_URL;
 		$api_start_time = microtime(true);

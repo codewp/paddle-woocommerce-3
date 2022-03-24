@@ -306,6 +306,12 @@ class Paddle_WC_Gateway extends WC_Payment_Gateway {
 				'type' => 'text',
 				'default' => get_bloginfo('name') . ' Checkout'
 			),
+			'subscription_plan_id' => array(
+				'title' => __('Subscription Plan ID'),
+				'description' => __('The subscription plan ID to use in the paddle checkout'),
+				'type' => 'text',
+				'default' => ''
+			),
 			'product_icon' => array(
 				'title' => __('Product Icon'),
 				'description' => __('The url of the icon to show next to the product name during checkout'),
