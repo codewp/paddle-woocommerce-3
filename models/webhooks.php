@@ -88,4 +88,20 @@ class Paddle_WC_Webhooks {
         }
     }
 
+    public function subscription_created() {
+        $subscription_id = isset( $_POST['subscription_id'] ) ? sanitize_text_field( $_POST['subscription_id'] ) : '';
+        $passthrough     = ! empty( $_POST['passthrough'] ) ? sanitize_text_field( $_POST['passthrough'] ) : '';
+        $order           = ! empty( $passthrough ) ? paddle_wc_get_order_by_passthrough( $passthrough ) : false;
+
+        if ( empty( $subscription_id ) || ! $order ) {
+            if ( paddle_wc()->log_enabled ) {
+                paddle_wc()->log->error( 'Paddle payment success order not found for Paddle subscription #' . $subscription_id . ' and passthrough: ' . $passthrough . '.', array( 'source' => 'paddle' ) );
+            }
+            $this->set_status_header( 200 );
+            return;
+        }
+
+
+    }
+
 }

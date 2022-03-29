@@ -3,7 +3,7 @@
  * Plugin Name: Paddle
  * Plugin URI: https://github.com/hasinhayder/paddle-woocommerce-3
  * Description: Paddle Payment Gateway for WooCommerce
- * Version: 3.0.1
+ * Version: 4.0.0
  * Author: Paddle.com (Improvements by ThemeBucket)
  * Author URI: https://github.com/hasinhayder
  */
@@ -64,6 +64,8 @@ final class Paddle_WC {
 
 	public $log_enabled = true;
 
+	public $version = '4.0.0';
+
 	/**
 	 * Main Paddle_WC Instance.
 	 * Ensures only one instance of WooCommerce is loaded or can be loaded.
@@ -99,6 +101,7 @@ final class Paddle_WC {
 		// Don't load extension if WooCommerce is not active
 		if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))) {
 
+			include_once dirname( __FILE__ ) . '/helpers/install.php';
 			include_once dirname( __FILE__ ) . '/helpers/notice.php';
 			include_once dirname( __FILE__ ) . '/helpers/order.php';
 			include_once('models/api.php');
