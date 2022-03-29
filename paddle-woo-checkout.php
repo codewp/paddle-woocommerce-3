@@ -20,6 +20,8 @@ if (!class_exists('Paddle_WC')) :
  */
 final class Paddle_WC {
 
+	public $version = '4.0.0';
+
 	/**
 	 * Instance of our settings object.
 	 *
@@ -64,7 +66,7 @@ final class Paddle_WC {
 
 	public $log_enabled = true;
 
-	public $version = '4.0.0';
+	public $subscriptions;
 
 	/**
 	 * Main Paddle_WC Instance.
@@ -104,10 +106,12 @@ final class Paddle_WC {
 			include_once dirname( __FILE__ ) . '/helpers/install.php';
 			include_once dirname( __FILE__ ) . '/helpers/notice.php';
 			include_once dirname( __FILE__ ) . '/helpers/order.php';
-			include_once('models/api.php');
-			include_once('models/checkout.php');
-			include_once('models/gateway.php');
-			include_once('models/settings.php');
+			include_once dirname( __FILE__ ) . '/models/db.php';
+			include_once dirname( __FILE__ ) . '/models/db-subscriptions.php';
+			include_once dirname( __FILE__ ) . '/models/api.php';
+			include_once dirname( __FILE__ ) . '/models/checkout.php';
+			include_once dirname( __FILE__ ) . '/models/gateway.php';
+			include_once dirname( __FILE__ ) . '/models/settings.php';
 			include_once dirname( __FILE__ ) . '/models/webhooks.php';
 
 			// Register the Paddle gateway with WC
@@ -124,6 +128,8 @@ final class Paddle_WC {
 				$this->checkout->register_callbacks();
 
 			}
+
+			$this->subscriptions = new Paddle_DB_Subscriptions();
 
 			// Always setup the gateway as its needed to change admin settings
 			$this->gateway = new Paddle_WC_Gateway($this->settings);

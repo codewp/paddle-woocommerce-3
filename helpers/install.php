@@ -77,7 +77,8 @@ update_url TEXT NOT NULL,
 next_bill_date DATETIME NOT NULL default '0000-00-00 00:00:00',
 currency char(3) NOT NULL,
 unit_price varchar(20) NOT NULL,
-PRIMARY KEY  (id)
+PRIMARY KEY (id),
+UNIQUE KEY subscription_id (subscription_id(191)
 ) $collate;";
 
     return $tables;

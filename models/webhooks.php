@@ -95,13 +95,103 @@ class Paddle_WC_Webhooks {
 
         if ( empty( $subscription_id ) || ! $order ) {
             if ( paddle_wc()->log_enabled ) {
-                paddle_wc()->log->error( 'Paddle payment success order not found for Paddle subscription #' . $subscription_id . ' and passthrough: ' . $passthrough . '.', array( 'source' => 'paddle' ) );
+                paddle_wc()->log->error( 'Paddle subscription created: order not found for Paddle subscription #' . $subscription_id . ' and passthrough: ' . $passthrough, array( 'source' => 'paddle' ) );
             }
             $this->set_status_header( 200 );
             return;
         }
 
+        $data = array(
+            'order_id' => $order->get_id(),
+            'subscription_id' => $subscription_id,
+            'subscription_plan_id' => isset( $_POST['subscription_plan_id'] ) ? sanitize_text_field( $_POST['subscription_plan_id'] ) : '',
+            'paddle_user_id' => isset( $_POST['user_id'] ) ? sanitize_text_field( $_POST['user_id'] ) : '',
+            'status' => isset( $_POST['status'] ) ? sanitize_text_field( $_POST['status'] ) : '',
+            'cancel_url' => isset( $_POST['cancel_url'] ) ? esc_url_raw( $_POST['cancel_url'] ) : '',
+            'update_url' => isset( $_POST['update_url'] ) ? esc_url_raw( $_POST['update_url'] ) : '',
+            'next_bill_date' => isset( $_POST['next_bill_date'] ) ? sanitize_text_field( $_POST['next_bill_date'] ) : '',
+            'currency' => isset( $_POST['currency'] ) ? sanitize_text_field( $_POST['currency'] ) : '',
+            'unit_price' => isset( $_POST['unit_price'] ) ? sanitize_text_field( $_POST['unit_price'] ) : '',
+        );
 
+        $id = paddle_wc()->subscriptions->add( $data );
+
+        if ( 0 < $id ) {
+            do_action( 'paddle_wc_subscription_created', $id, $data, $order );
+        }
+
+        $this->set_status_header( 200 );
+    }
+
+    public function subscription_updated() {
+        $subscription_id = isset( $_POST['subscription_id'] ) ? sanitize_text_field( $_POST['subscription_id'] ) : '';
+        if ( empty( $subscription_id ) ) {
+            if ( paddle_wc()->log_enabled ) {
+                paddle_wc()->log->error( 'Paddle subscription updated: subscription_id is required.', array( 'source' => 'paddle' ) );
+            }
+            $this->set_status_header( 200 );
+            return;
+        }
+
+        $subscription = paddle_wc()->subscriptions->get_item_by( 'subscription_id', $subscription_id );
+        if ( ! $subscription ) {
+            if ( paddle_wc()->log_enabled ) {
+                paddle_wc()->log->error( 'Paddle subscription updated: subscription not found for Paddle subscription #' . $subscription_id, array( 'source' => 'paddle' ) );
+            }
+            $this->set_status_header( 200 );
+            return;
+        }
+
+        $data = array(
+            'id' => $subscription->id,
+            'status' => isset( $_POST['status'] ) ? sanitize_text_field( $_POST['status'] ) : '',
+            'cancel_url' => isset( $_POST['cancel_url'] ) ? esc_url_raw( $_POST['cancel_url'] ) : '',
+            'update_url' => isset( $_POST['update_url'] ) ? esc_url_raw( $_POST['update_url'] ) : '',
+            'next_bill_date' => isset( $_POST['next_bill_date'] ) ? sanitize_text_field( $_POST['next_bill_date'] ) : '',
+            'currency' => isset( $_POST['currency'] ) ? sanitize_text_field( $_POST['currency'] ) : '',
+            'unit_price' => isset( $_POST['new_unit_price'] ) ? sanitize_text_field( $_POST['new_unit_price'] ) : '',
+        );
+
+        $id = paddle_wc()->subscriptions->add( $data );
+
+        if ( 0 < $id ) {
+            do_action( 'paddle_wc_subscription_updated', $id, $data );
+        }
+
+        $this->set_status_header( 200 );
+    }
+
+    public function subscription_cancelled() {
+        $subscription_id = isset( $_POST['subscription_id'] ) ? sanitize_text_field( $_POST['subscription_id'] ) : '';
+        if ( empty( $subscription_id ) ) {
+            if ( paddle_wc()->log_enabled ) {
+                paddle_wc()->log->error( 'Paddle subscription cancelled: subscription_id is required.', array( 'source' => 'paddle' ) );
+            }
+            $this->set_status_header( 200 );
+            return;
+        }
+
+        $subscription = paddle_wc()->subscriptions->get_item_by( 'subscription_id', $subscription_id );
+        if ( ! $subscription ) {
+            if ( paddle_wc()->log_enabled ) {
+                paddle_wc()->log->error( 'Paddle subscription cancelled: subscription not found for Paddle subscription #' . $subscription_id, array( 'source' => 'paddle' ) );
+            }
+            $this->set_status_header( 200 );
+            return;
+        }
+
+        $data = array(
+            'id' => $subscription->id,
+            'status' => isset( $_POST['status'] ) ? sanitize_text_field( $_POST['status'] ) : '',
+        );
+
+        $id = paddle_wc()->subscriptions->add( $data );
+
+        if ( 0 < $id ) {
+            do_action( 'paddle_wc_subscription_cancelled', $id, $data );
+        }
+
+        $this->set_status_header( 200 );
     }
 
 }
