@@ -108,6 +108,7 @@ final class Paddle_WC {
 			include_once dirname( __FILE__ ) . '/helpers/order.php';
 			include_once dirname( __FILE__ ) . '/models/db.php';
 			include_once dirname( __FILE__ ) . '/models/db-subscriptions.php';
+			include_once dirname( __FILE__ ) . '/models/menu.php';
 			include_once dirname( __FILE__ ) . '/models/api.php';
 			include_once dirname( __FILE__ ) . '/models/checkout.php';
 			include_once dirname( __FILE__ ) . '/models/gateway.php';
@@ -130,6 +131,9 @@ final class Paddle_WC {
 			}
 
 			$this->subscriptions = new Paddle_DB_Subscriptions();
+
+			$this->menu = new Paddle_Menu();
+			$this->menu->init();
 
 			// Always setup the gateway as its needed to change admin settings
 			$this->gateway = new Paddle_WC_Gateway($this->settings);
