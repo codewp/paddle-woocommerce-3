@@ -38,7 +38,7 @@ class Paddle_Menu {
     }
 
     public function endpoint_content() {
-        echo '<div id="paddle-subscriptions">Paddle Subscriptions</div>';
+        echo '<div id="paddle-subscriptions"></div>';
     }
 
 }

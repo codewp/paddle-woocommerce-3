@@ -86,8 +86,15 @@ final class Paddle_WC {
 	 * Paddle_WC Constructor.
 	 */
 	public function __construct() {
+		$this->define_constants();
 		$this->register_init_callback();
 	}
+
+	private function define_constants() {
+        $this->define( 'ASNP_PADDLE_WC_ABSPATH', dirname( __FILE__ ) . '/' );
+        $this->define( 'ASNP_PADDLE_WC_PLUGIN_URL', plugin_dir_url( dirname( __FILE__ ) ) );
+		$this->define( 'ASNP_PADDLE_WC_PLUGIN_FILE', ASNP_PADDLE_WC_ABSPATH . 'paddle-woo-checkout.php' );
+    }
 
 	/**
 	 * Registers the init callback for when WP is done loading plugins.
@@ -115,6 +122,7 @@ final class Paddle_WC {
 			include_once dirname( __FILE__ ) . '/models/gateway.php';
 			include_once dirname( __FILE__ ) . '/models/settings.php';
 			include_once dirname( __FILE__ ) . '/models/webhooks.php';
+			include_once dirname( __FILE__ ) . '/models/assets.php';
 
 			// Register the Paddle gateway with WC
 			add_filter('woocommerce_payment_gateways', array($this, 'on_register_woocommerce_gateways'));
@@ -142,6 +150,9 @@ final class Paddle_WC {
 
 			$this->webhooks = new Paddle_WC_Webhooks();
 			$this->webhooks->init();
+
+			$this->assets = new Paddle_WC_Assets();
+			$this->assets->init();
 		}
 	}
 
@@ -152,6 +163,18 @@ final class Paddle_WC {
 		$methods[] = 'Paddle_WC_Gateway';
 		return $methods;
 	}
+
+	 /**
+	 * Define constant if not already set.
+	 *
+	 * @param string      $name  Constant name.
+	 * @param string|bool $value Constant value.
+	 */
+	protected function define( $name, $value ) {
+		if ( ! defined( $name ) ) {
+			define( $name, $value );
+		}
+    }
 }
 
 endif;
