@@ -1,0 +1,10 @@
+!.eslintrc.js
+build
+build-module
+coverage
+languages
+node_modules
+vendor
+legacy
+tests/e2e/specs
+"parser": "babel-eslint"

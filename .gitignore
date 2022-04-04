@@ -1,2 +1,65 @@
+# Editors
+project.xml
+project.properties
+/nbproject/private/
+.buildpath
+.project
+.settings*
 .idea
+.vscode
+*.sublime-project
+*.sublime-workspace
+.sublimelinterrc
+
+# Grunt
+/node_modules/
+none
+package-lock.json
+composer.lock
+
+# Sass
+.sass-cache/
+
+# OS X metadata
 .DS_Store
+
+# Windows junk
+Thumbs.db
+
+# ApiGen
+/wc-apidocs/
+
+# Behat/CLI Tests
+tests/cli/installer
+tests/cli/composer.phar
+tests/cli/composer.lock
+tests/cli/composer.json
+tests/cli/vendor
+
+# Unit tests
+/tmp
+/tests/bin/tmp
+/tests/e2e-tests/config/local-*.json
+
+# Logs
+/logs
+
+# Composer
+/vendor/
+
+# Built files
+/build/
+bin/languages
+ewd-whatsapp.zip
+storybook-static/
+blocks.ini
+/wp-content/
+/.wp-env.override.json
+
+# Ignore map files
+*.js.map
+*.css.map
+
+# Ignore dev files.
+/assets/css/account-subscriptions/*
+/assets/js/account-subscriptions/*
