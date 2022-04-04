@@ -103,6 +103,7 @@ final class Paddle_WC {
 		// Don't load extension if WooCommerce is not active
 		if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))) {
 
+			include_once dirname( __FILE__ ) . '/helpers/utils.php';
 			include_once dirname( __FILE__ ) . '/helpers/install.php';
 			include_once dirname( __FILE__ ) . '/helpers/notice.php';
 			include_once dirname( __FILE__ ) . '/helpers/order.php';

@@ -42,6 +42,8 @@ function paddle_install() {
 
     delete_transient( 'paddle_installing' );
 
+    flush_rewrite_rules();
+
     do_action( 'paddle_installed' );
 }
 
