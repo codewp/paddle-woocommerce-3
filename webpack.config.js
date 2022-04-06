@@ -98,7 +98,11 @@ const frontConfig = {
 			{ test: /\.md$/, use: 'raw-loader' },
 			{
 				test: /\.s?css$/,
-				use: [ MiniCssExtractPlugin.loader, 'css-loader' ],
+				use: [
+					MiniCssExtractPlugin.loader,
+					'css-loader',
+					'sass-loader',
+				],
 			},
 			{
 				test: /\.(png|jpe?g|gif|svg|eot|ttf|woff|woff2)$/,

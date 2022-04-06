@@ -24,6 +24,7 @@ class Paddle_WC_Assets {
 					'wp-element',
 					'wp-hooks',
 					'wp-i18n',
+					'wp-api-fetch',
 				),
 				paddle_wc()->version,
 				true

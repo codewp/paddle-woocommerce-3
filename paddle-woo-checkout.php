@@ -123,6 +123,9 @@ final class Paddle_WC {
 			include_once dirname( __FILE__ ) . '/models/settings.php';
 			include_once dirname( __FILE__ ) . '/models/webhooks.php';
 			include_once dirname( __FILE__ ) . '/models/assets.php';
+			include_once dirname( __FILE__ ) . '/api/rest-api.php';
+			include_once dirname( __FILE__ ) . '/api/base-controller.php';
+			include_once dirname( __FILE__ ) . '/api/subscriptions-controller.php';
 
 			// Register the Paddle gateway with WC
 			add_filter('woocommerce_payment_gateways', array($this, 'on_register_woocommerce_gateways'));
@@ -153,6 +156,8 @@ final class Paddle_WC {
 
 			$this->assets = new Paddle_WC_Assets();
 			$this->assets->init();
+
+			$this->api = new Paddle_Rest_Api();
 		}
 	}
 

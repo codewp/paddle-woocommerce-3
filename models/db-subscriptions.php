@@ -129,15 +129,17 @@ class Paddle_DB_Subscriptions extends Paddle_DB {
 		global $wpdb;
 
 		$args = wp_parse_args( $args, array(
-			'number'  => 20,
-			'offset'  => 0,
-			'orderby' => 'id',
-			'order'   => 'DESC',
-			'output'  => OBJECT,
+			'number'   => 20,
+			'offset'   => 0,
+			'orderby'  => 'id',
+			'order'    => 'DESC',
+			'output'   => OBJECT,
+			'paginate' => false,
 		) );
 
 		if ( $args['number'] < 1 ) {
-			$args['number'] = 999999999999;
+			$args['number']   = 999999999999;
+			$args['paginate'] = false;
 		}
 
 		$args['orderby'] = ! array_key_exists( $args['orderby'], $this->get_columns() ) ? 'id' : $args['orderby'];
@@ -175,10 +177,55 @@ class Paddle_DB_Subscriptions extends Paddle_DB {
             $select_args[] = strtolower( sanitize_text_field( $args['status'] ) );
 		}
 
+		// Select specific user subscriptions.
+		if ( ! empty( $args['user_id' ] ) && 0 < (int) $args['user_id'] ) {
+			$customer_orders = wc_get_orders(
+				array(
+					'customer' => (int) $args['user_id'],
+					'return'   => 'ids',
+				)
+			);
+			if ( empty( $customer_orders ) ) {
+				if ( empty( $args['paginate'] ) ) {
+					return array();
+				}
+				return array(
+					'items' => array(),
+					'total' => 0,
+					'pages' => 0,
+				);
+			}
+
+			$where .= ' AND `order_id` IN (' . implode( ',', array_map( 'absint', $customer_orders ) ) . ')';
+		}
+
 		$select_args[] = absint( $args['offset'] );
 		$select_args[] = absint( $args['number'] );
 
-		return $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $this->table_name $where ORDER BY {$args['orderby']} {$args['order']} LIMIT %d,%d;", $select_args ), $args['output'] );
+		$items = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $this->table_name $where ORDER BY {$args['orderby']} {$args['order']} LIMIT %d,%d;", $select_args ), $args['output'] );
+		if ( empty( $items ) ) {
+			if ( empty( $args['paginate'] ) ) {
+				return array();
+			}
+
+			return array(
+				'items' => array(),
+				'total' => 0,
+				'pages' => 0,
+			);
+		}
+
+		if ( empty( $args['paginate'] ) ) {
+			return $items;
+		}
+
+		$total = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT( $this->primary_key ) FROM $this->table_name $where", $select_args ) );
+
+		return array(
+			'items' => $items,
+			'total' => absint( $total ),
+			'pages' => ceil( absint( $total ) / absint( $args['number'] ) ),
+		);
 	}
 
     /**
