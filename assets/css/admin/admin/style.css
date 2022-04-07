@@ -1,0 +1,20 @@
+/*!***********************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./assets/js/dev/admin/views/App/style.scss ***!
+  \***********************************************************************************************************************************/
+#paddle-subscriptions {
+  position: relative;
+}
+#paddle-subscriptions .asnp-paddle-blur {
+  filter: blur(2px);
+  pointer-events: none;
+}
+#paddle-subscriptions .asnp-paddle-loading {
+  text-align: center;
+  font-size: 18px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/*# sourceMappingURL=style.css.map*/

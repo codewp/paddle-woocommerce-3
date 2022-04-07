@@ -25,7 +25,7 @@ class Paddle_WC_Admin_Menu
 	        __( 'Paddle', 'paddle' ),
             __( 'Paddle', 'paddle' ),
             apply_filters( 'asnp_paddle_menu_capability', 'manage_options' ),
-            'paddle',
+            'asnp-paddle',
             array( $this, 'create_menu' ),
             ASNP_PADDLE_WC_PLUGIN_URL . 'assets/images/menu-icon.svg'
         );
@@ -34,8 +34,7 @@ class Paddle_WC_Admin_Menu
 	public function create_menu() {
 		?>
 		<div id="asnp-paddle-wrapper" class="asnp-paddle-wrapper">
-			<div id="asnp-paddle">
-			</div>
+			<div id="asnp-paddle"></div>
 		</div>
 		<?php
 	}

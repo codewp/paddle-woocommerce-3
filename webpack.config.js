@@ -21,10 +21,10 @@ const aliases = {
 	'@paddle/api': path.resolve( __dirname, 'assets/js/dev/api' ),
 };
 
-/* const adminConfig = {
+const adminConfig = {
 	mode: NODE_ENV,
 	entry: {
-		product: './assets/js/dev/product/index.jsx',
+		admin: './assets/js/dev/admin/index.jsx',
 	},
 	output: {
 		filename: './assets/js/admin/[name]/index.js',
@@ -50,7 +50,8 @@ const aliases = {
 				test: /\.s?css$/,
 				use: [
 					MiniCssExtractPlugin.loader,
-					'css-loader'
+					'css-loader',
+					'sass-loader',
 				],
 			},
 			{
@@ -68,7 +69,7 @@ const aliases = {
 			filename: './assets/css/admin/[name]/style.css',
 		} ),
 	],
-}; */
+};
 
 const frontConfig = {
 	mode: NODE_ENV,
@@ -122,8 +123,8 @@ const frontConfig = {
 };
 
 if ( 'production' !== NODE_ENV ) {
-	// adminConfig.devtool = process.env.SOURCEMAP || 'source-map';
+	adminConfig.devtool = process.env.SOURCEMAP || 'source-map';
 	frontConfig.devtool = process.env.SOURCEMAP || 'source-map';
 }
 
-module.exports = [ frontConfig ];
+module.exports = [ adminConfig, frontConfig ];
