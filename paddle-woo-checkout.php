@@ -92,7 +92,7 @@ final class Paddle_WC {
 
 	private function define_constants() {
         $this->define( 'ASNP_PADDLE_WC_ABSPATH', dirname( __FILE__ ) . '/' );
-        $this->define( 'ASNP_PADDLE_WC_PLUGIN_URL', plugin_dir_url( dirname( __FILE__ ) ) );
+        $this->define( 'ASNP_PADDLE_WC_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 		$this->define( 'ASNP_PADDLE_WC_PLUGIN_FILE', ASNP_PADDLE_WC_ABSPATH . 'paddle-woo-checkout.php' );
     }
 
@@ -126,6 +126,7 @@ final class Paddle_WC {
 			include_once dirname( __FILE__ ) . '/api/rest-api.php';
 			include_once dirname( __FILE__ ) . '/api/base-controller.php';
 			include_once dirname( __FILE__ ) . '/api/subscriptions-controller.php';
+			include_once dirname( __FILE__ ) . '/admin/admin.php';
 
 			// Register the Paddle gateway with WC
 			add_filter('woocommerce_payment_gateways', array($this, 'on_register_woocommerce_gateways'));
@@ -158,6 +159,11 @@ final class Paddle_WC {
 			$this->assets->init();
 
 			$this->api = new Paddle_Rest_Api();
+
+			if ( is_admin() ) {
+				$this->admin = new Paddle_WC_Admin();
+				$this->admin->init();
+			}
 		}
 	}
 
