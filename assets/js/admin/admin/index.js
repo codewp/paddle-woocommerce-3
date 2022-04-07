@@ -121,7 +121,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
 /* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _paddle_api_account_subscriptions__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @paddle/api/account-subscriptions */ "./assets/js/dev/api/account-subscriptions.js");
+/* harmony import */ var _paddle_api_subscriptions__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @paddle/api/subscriptions */ "./assets/js/dev/api/subscriptions.js");
 /* harmony import */ var _Pagination__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Pagination */ "./assets/js/dev/admin/components/Subscriptions/Pagination.jsx");
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
@@ -146,6 +146,9 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 var columns = [{
   key: 'order-number',
   value: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Order', 'paddle')
+}, {
+  key: 'user_email',
+  value: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Email', 'paddle')
 }, {
   key: 'date',
   value: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Date', 'paddle')
@@ -192,7 +195,7 @@ function Subscriptions() {
             _context.prev = 0;
             setLoading(true);
             _context.next = 4;
-            return (0,_paddle_api_account_subscriptions__WEBPACK_IMPORTED_MODULE_2__.getAccountSubscriptions)({
+            return (0,_paddle_api_subscriptions__WEBPACK_IMPORTED_MODULE_2__.getSubscriptions)({
               page: page
             });
 
@@ -264,7 +267,7 @@ function Subscriptions() {
         key: subscription.order_id + '_' + key
       }, 'order-number' === key && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("a", {
         href: subscription.order_url ? subscription.order_url : '#'
-      }, "#", subscription.order_id), ('date' === key || 'next_bill_date' === key) && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("time", {
+      }, "#", subscription.order_id + (subscription.user_name ? ' ' + subscription.user_name : '')), ('date' === key || 'next_bill_date' === key) && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("time", {
         dateTime: subscription[key + '_time']
       }, subscription[key]), 'actions' === key && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("a", {
         href: subscription.cancel_url ? subscription.cancel_url : '#',
@@ -320,16 +323,31 @@ function App() {
 
 /***/ }),
 
-/***/ "./assets/js/dev/api/account-subscriptions.js":
-/*!****************************************************!*\
-  !*** ./assets/js/dev/api/account-subscriptions.js ***!
-  \****************************************************/
+/***/ "./assets/js/dev/api/constants.js":
+/*!****************************************!*\
+  !*** ./assets/js/dev/api/constants.js ***!
+  \****************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "getAccountSubscriptions": () => (/* binding */ getAccountSubscriptions)
+/* harmony export */   "API_ROOT": () => (/* binding */ API_ROOT)
+/* harmony export */ });
+var API_ROOT = '/asnp-woocommerce-paddle/v1';
+
+/***/ }),
+
+/***/ "./assets/js/dev/api/subscriptions.js":
+/*!********************************************!*\
+  !*** ./assets/js/dev/api/subscriptions.js ***!
+  \********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "getSubscriptions": () => (/* binding */ getSubscriptions)
 /* harmony export */ });
 /* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/api-fetch */ "@wordpress/api-fetch");
 /* harmony import */ var _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_0__);
@@ -343,7 +361,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 
 
-var getAccountSubscriptions = /*#__PURE__*/function () {
+var getSubscriptions = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
     var args,
         query,
@@ -363,7 +381,7 @@ var getAccountSubscriptions = /*#__PURE__*/function () {
             _context.prev = 3;
             _context.next = 6;
             return _wordpress_api_fetch__WEBPACK_IMPORTED_MODULE_0___default()({
-              path: "".concat(_constants__WEBPACK_IMPORTED_MODULE_2__.API_ROOT, "/subscriptions/account").concat(query),
+              path: "".concat(_constants__WEBPACK_IMPORTED_MODULE_2__.API_ROOT, "/subscriptions").concat(query),
               method: 'GET'
             });
 
@@ -393,25 +411,10 @@ var getAccountSubscriptions = /*#__PURE__*/function () {
     }, _callee, null, [[3, 12]]);
   }));
 
-  return function getAccountSubscriptions() {
+  return function getSubscriptions() {
     return _ref.apply(this, arguments);
   };
 }();
-
-/***/ }),
-
-/***/ "./assets/js/dev/api/constants.js":
-/*!****************************************!*\
-  !*** ./assets/js/dev/api/constants.js ***!
-  \****************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "API_ROOT": () => (/* binding */ API_ROOT)
-/* harmony export */ });
-var API_ROOT = '/asnp-woocommerce-paddle/v1';
 
 /***/ }),
 

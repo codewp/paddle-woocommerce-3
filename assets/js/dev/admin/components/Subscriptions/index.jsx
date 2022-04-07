@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { __ } from '@wordpress/i18n';
-import { getAccountSubscriptions } from '@paddle/api/account-subscriptions';
+import { getSubscriptions } from '@paddle/api/subscriptions';
 import Pagination from './Pagination';
 
 const columns = [
 	{ key: 'order-number', value: __( 'Order', 'paddle' ) },
+	{ key: 'user_email', value: __( 'Email', 'paddle' ) },
 	{ key: 'date', value: __( 'Date', 'paddle' ) },
 	{ key: 'next_bill_date', value: __( 'Next Date', 'paddle' ) },
 	{ key: 'status', value: __( 'Status', 'paddle' ) },
@@ -21,7 +22,7 @@ export default function Subscriptions() {
 	useEffect( async () => {
 		try {
 			setLoading( true );
-			let response = await getAccountSubscriptions( { page } );
+			let response = await getSubscriptions( { page } );
 			setSubscriptions(
 				response.items && response.items.length ? response.items : []
 			);
@@ -105,7 +106,12 @@ export default function Subscriptions() {
 															: '#'
 													}
 												>
-													#{ subscription.order_id }
+													#
+													{ subscription.order_id +
+														( subscription.user_name
+															? ' ' +
+															  subscription.user_name
+															: '' ) }
 												</a>
 											) }
 											{ ( 'date' === key ||
