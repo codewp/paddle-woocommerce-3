@@ -161,7 +161,15 @@ export default function Subscriptions() {
 			) }
 			{ ! loading && 0 >= subscriptions.length && (
 				<div className="woocommerce-message woocommerce-message--info woocommerce-Message woocommerce-Message--info woocommerce-info">
-					<a className="woocommerce-Button button" href="#">
+					<a
+						className="woocommerce-Button button"
+						href={
+							paddleSubscriptionsData &&
+							paddleSubscriptionsData.shopUrl
+								? paddleSubscriptionsData.shopUrl
+								: '#'
+						}
+					>
 						{ __( 'Browse products', 'paddle' ) }
 					</a>
 					{ __( 'No order has been made yet.', 'paddle' ) }

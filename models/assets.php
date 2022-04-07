@@ -29,6 +29,13 @@ class Paddle_WC_Assets {
 				paddle_wc()->version,
 				true
 			);
+			wp_localize_script(
+				'paddle-account-subscriptions',
+				'paddleSubscriptionsData',
+				array(
+					'shopUrl' => esc_url( apply_filters( 'woocommerce_return_to_shop_redirect', wc_get_page_permalink( 'shop' ) ) ),
+				)
+			);
 
 			if ( function_exists( 'wp_set_script_translations' ) ) {
 				wp_set_script_translations( 'paddle-account-subscriptions', 'paddle', ASNP_PADDLE_WC_ABSPATH . 'languages' );
