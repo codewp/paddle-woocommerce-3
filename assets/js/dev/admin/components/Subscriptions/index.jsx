@@ -49,16 +49,16 @@ export default function Subscriptions() {
 		<>
 			{ 0 < subscriptions.length && (
 				<table
-					className={ `woocommerce-orders-table woocommerce-MyAccount-orders shop_table shop_table_responsive my_account_orders account-orders-table${ blur }` }
+					className={ `wp-list-table widefat fixed striped table-view-list posts${ blur }` }
 				>
 					<thead>
 						<tr>
 							{ columns.map( ( { key, value } ) => (
 								<th
-									className={ `woocommerce-orders-table__header woocommerce-orders-table__header-${ key }` }
+									className={ `manage-column column-${ key }` }
 									key={ key }
 								>
-									<span>{ value }</span>
+									{ value }
 								</th>
 							) ) }
 						</tr>
@@ -67,14 +67,14 @@ export default function Subscriptions() {
 					<tbody>
 						{ subscriptions.map( ( subscription ) => (
 							<tr
-								className={ `woocommerce-orders-table__row woocommerce-orders-table__row--status-${ subscription.status } order` }
+								className={ `iedit author-self level-0 type-paddle-subscriptions hentry status-${ subscription.status }` }
 								key={ subscription.order_id }
 							>
 								{ columns.map( ( { key, value } ) => {
 									if ( 'total' === key ) {
 										return (
 											<td
-												className={ `woocommerce-orders-table__cell woocommerce-orders-table__cell-${ key }` }
+												className={ `column-${ key }` }
 												data-title={ value }
 												key={
 													subscription.order_id +
@@ -90,7 +90,7 @@ export default function Subscriptions() {
 
 									return (
 										<td
-											className={ `woocommerce-orders-table__cell woocommerce-orders-table__cell-${ key }` }
+											className={ `column-${ key }` }
 											data-title={ value }
 											key={
 												subscription.order_id +

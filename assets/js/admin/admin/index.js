@@ -234,17 +234,17 @@ function Subscriptions() {
 
   var blur = loading ? ' asnp-paddle-blur' : '';
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement((react__WEBPACK_IMPORTED_MODULE_0___default().Fragment), null, 0 < subscriptions.length && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("table", {
-    className: "woocommerce-orders-table woocommerce-MyAccount-orders shop_table shop_table_responsive my_account_orders account-orders-table".concat(blur)
+    className: "wp-list-table widefat fixed striped table-view-list posts".concat(blur)
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("thead", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("tr", null, columns.map(function (_ref2) {
     var key = _ref2.key,
         value = _ref2.value;
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("th", {
-      className: "woocommerce-orders-table__header woocommerce-orders-table__header-".concat(key),
+      className: "manage-column column-".concat(key),
       key: key
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("span", null, value));
+    }, value);
   }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("tbody", null, subscriptions.map(function (subscription) {
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("tr", {
-      className: "woocommerce-orders-table__row woocommerce-orders-table__row--status-".concat(subscription.status, " order"),
+      className: "iedit author-self level-0 type-paddle-subscriptions hentry status-".concat(subscription.status),
       key: subscription.order_id
     }, columns.map(function (_ref3) {
       var key = _ref3.key,
@@ -252,7 +252,7 @@ function Subscriptions() {
 
       if ('total' === key) {
         return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("td", {
-          className: "woocommerce-orders-table__cell woocommerce-orders-table__cell-".concat(key),
+          className: "column-".concat(key),
           "data-title": value,
           key: subscription.order_id + '_' + key,
           dangerouslySetInnerHTML: {
@@ -262,7 +262,7 @@ function Subscriptions() {
       }
 
       return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("td", {
-        className: "woocommerce-orders-table__cell woocommerce-orders-table__cell-".concat(key),
+        className: "column-".concat(key),
         "data-title": value,
         key: subscription.order_id + '_' + key
       }, 'order-number' === key && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("a", {
