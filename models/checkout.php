@@ -47,8 +47,8 @@ class Paddle_WC_Checkout {
 		add_action('wp_ajax_nopriv_paddle_checkout_pay', array($this, 'on_ajax_process_checkout_pay'));
 
 		// Billing fields.
-		add_filter( 'woocommerce_checkout_fields', array($this, 'woocommerce_checkout_fields') );
-		add_action( 'woocommerce_admin_order_data_after_billing_address', array($this, 'display_vat_number') );
+		add_filter('woocommerce_checkout_fields', array($this, 'woocommerce_checkout_fields'));
+		add_action('woocommerce_admin_order_data_after_billing_address', array($this, 'display_vat_number'));
 	}
 
 	/**
