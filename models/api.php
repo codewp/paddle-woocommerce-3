@@ -35,6 +35,7 @@ class Paddle_WC_API {
 		$data['customer_postcode']     = $customer->get_billing_postcode();
 		$data['customer_country']      = $customer->get_billing_country();
 		$data['passthrough']           = base64_encode( json_encode( array( 'order_id' => $order->get_id() ) ) );
+		$data['vat_number']            = sanitize_text_field( $order->get_meta( '_billing_vat_number' ) );
 
 		// Add the product name(s) as custom message
 		if($settings->get('send_names') == 'yes') {
