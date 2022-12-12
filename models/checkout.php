@@ -46,9 +46,11 @@ class Paddle_WC_Checkout {
 		add_action('wp_ajax_paddle_checkout_pay', array($this, 'on_ajax_process_checkout_pay'));
 		add_action('wp_ajax_nopriv_paddle_checkout_pay', array($this, 'on_ajax_process_checkout_pay'));
 
-		// Billing fields.
-		add_filter('woocommerce_checkout_fields', array($this, 'woocommerce_checkout_fields'));
-		add_action('woocommerce_admin_order_data_after_billing_address', array($this, 'display_vat_number'));
+		// VAT checkout fields.
+		add_action( 'woocommerce_after_order_notes', array( $this, 'vat_checkout_fields' ) );
+		add_action( 'woocommerce_checkout_process', array( $this, 'process_vat_checkout_fields' ) );
+		add_action( 'woocommerce_checkout_create_order', array( $this, 'save_vat_checkout_fields' ) );
+		add_action( 'woocommerce_admin_order_data_after_billing_address', array( $this, 'display_vat_checkout_fields' ) );
 	}
 
 	/**
@@ -124,21 +126,101 @@ class Paddle_WC_Checkout {
 		return $order_url;
 	}
 
-	public function woocommerce_checkout_fields($fields) {
-		$fields['billing']['billing_vat_number'] = array(
+	public function vat_checkout_fields( $checkout ) {
+		echo '<div id="vat_checkout_fields"><h2>' . __('VAT information') . '</h2>';
+		echo '<p>' . __( 'If you would like to enter your VAT information then fill out all of the below fields.', 'paddle' ) . '</p>';
+
+		woocommerce_form_field( 'vat_number', array(
+			'type'         => 'text',
 			'label'        => __( 'VAT number', 'paddle' ),
 			'description'  => sprintf( __( 'Read more about %s.', 'paddle' ), '<a href="https://www.paddle.com/help/sell/tax/what-format-should-i-use-for-my-vat-id" target="_blank">' . __( 'VAT number format here', 'paddle' ) . '</a>' ),
 			'required'     => false,
 			'class'        => array( 'form-row-wide' ),
 			'autocomplete' => 'no',
-			'priority'     => 31,
-		);
+		), $checkout->get_value( 'vat_number' ) );
 
-		return $fields ;
+		woocommerce_form_field( 'vat_company_name', array(
+			'type'         => 'text',
+			'label'        => __( 'VAT company name', 'paddle' ),
+			'description'  => __( 'Required when you have entered your VAT number.', 'paddle' ),
+			'required'     => false,
+			'class'        => array( 'form-row-wide' ),
+			'autocomplete' => 'no',
+		), $checkout->get_value( 'vat_company_name' ) );
+
+		woocommerce_form_field( 'vat_country', array(
+			'type'         => 'text',
+			'label'        => __( 'VAT country', 'paddle' ),
+			'description'  => __( 'Required when you have entered your VAT number.', 'paddle' ),
+			'required'     => false,
+			'class'        => array( 'form-row-wide' ),
+			'autocomplete' => 'no',
+		), $checkout->get_value( 'vat_country' ) );
+
+		woocommerce_form_field( 'vat_city', array(
+			'type'         => 'text',
+			'label'        => __( 'VAT city', 'paddle' ),
+			'description'  => __( 'Required when you have entered your VAT number.', 'paddle' ),
+			'required'     => false,
+			'class'        => array( 'form-row-wide' ),
+			'autocomplete' => 'no',
+		), $checkout->get_value( 'vat_city' ) );
+
+		woocommerce_form_field( 'vat_street', array(
+			'type'         => 'text',
+			'label'        => __( 'VAT street', 'paddle' ),
+			'description'  => __( 'Required when you have entered your VAT number.', 'paddle' ),
+			'required'     => false,
+			'class'        => array( 'form-row-wide' ),
+			'autocomplete' => 'no',
+		), $checkout->get_value( 'vat_street' ) );
+
+		echo '</div>';
 	}
 
-	public function display_vat_number($order) {
-		echo '<p><strong>' . __( 'VAT number', 'paddle' ) . ':</strong> ' . esc_html( $order->get_meta( '_billing_vat_number' ) ) . '</p>';
+	public function process_vat_checkout_fields() {
+		$vat_number = ! empty( $_POST['vat_number'] ) ? sanitize_text_field( trim( $_POST['vat_number'] ) ) : '';
+		if ( empty( $vat_number ) ) {
+			return;
+		}
+
+		$vat_company_name = ! empty( $_POST['vat_company_name'] ) ? sanitize_text_field( trim( $_POST['vat_company_name'] ) ) : '';
+		$vat_country = ! empty( $_POST['vat_country'] ) ? sanitize_text_field( trim( $_POST['vat_country'] ) ) : '';
+		$vat_city = ! empty( $_POST['vat_city'] ) ? sanitize_text_field( trim( $_POST['vat_city'] ) ) : '';
+		$vat_street = ! empty( $_POST['vat_street'] ) ? sanitize_text_field( trim( $_POST['vat_street'] ) ) : '';
+
+		if (
+			empty( $vat_company_name ) || empty( $vat_country ) ||
+			empty( $vat_city ) || empty( $vat_street )
+		) {
+			wc_add_notice( __( 'The following fields are required when passing vat number: vat company name, vat country, vat city, vat street.' ), 'error' );
+		}
+	}
+
+	public function save_vat_checkout_fields( $order ) {
+		if ( ! $order ) {
+            return;
+        }
+
+        $vat_number = ! empty( $_POST['vat_number'] ) ? sanitize_text_field( trim( $_POST['vat_number'] ) ) : '';
+		$vat_company_name = ! empty( $_POST['vat_company_name'] ) ? sanitize_text_field( trim( $_POST['vat_company_name'] ) ) : '';
+		$vat_country = ! empty( $_POST['vat_country'] ) ? sanitize_text_field( trim( $_POST['vat_country'] ) ) : '';
+		$vat_city = ! empty( $_POST['vat_city'] ) ? sanitize_text_field( trim( $_POST['vat_city'] ) ) : '';
+		$vat_street = ! empty( $_POST['vat_street'] ) ? sanitize_text_field( trim( $_POST['vat_street'] ) ) : '';
+
+        $order->add_meta_data( 'vat_number', $vat_number, true );
+		$order->add_meta_data( 'vat_company_name', $vat_company_name, true );
+		$order->add_meta_data( 'vat_country', $vat_country, true );
+		$order->add_meta_data( 'vat_city', $vat_city, true );
+		$order->add_meta_data( 'vat_street', $vat_street, true );
+	}
+
+	public function display_vat_checkout_fields( $order ) {
+		echo '<p><strong>' . __( 'VAT number', 'paddle' ) . ':</strong> ' . esc_html( $order->get_meta( 'vat_number' ) ) . '</p>';
+		echo '<p><strong>' . __( 'VAT company name', 'paddle' ) . ':</strong> ' . esc_html( $order->get_meta( 'vat_company_name' ) ) . '</p>';
+		echo '<p><strong>' . __( 'VAT country', 'paddle' ) . ':</strong> ' . esc_html( $order->get_meta( 'vat_country' ) ) . '</p>';
+		echo '<p><strong>' . __( 'VAT city', 'paddle' ) . ':</strong> ' . esc_html( $order->get_meta( 'vat_city' ) ) . '</p>';
+		echo '<p><strong>' . __( 'VAT street', 'paddle' ) . ':</strong> ' . esc_html( $order->get_meta( 'vat_street' ) ) . '</p>';
 	}
 
 }
