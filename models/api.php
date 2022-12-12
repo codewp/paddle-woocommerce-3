@@ -42,6 +42,7 @@ class Paddle_WC_API {
 		$vat_country = sanitize_text_field( trim( $order->get_meta( 'vat_country' ) ) );
 		$vat_city = sanitize_text_field( trim( $order->get_meta( 'vat_city' ) ) );
 		$vat_street = sanitize_text_field( trim( $order->get_meta( 'vat_street' ) ) );
+		$vat_postcode = sanitize_text_field( trim( $order->get_meta( 'vat_postcode' ) ) );
 		if (
 			! empty( $vat_number ) && ! empty( $vat_company_name ) &&
 			! empty( $vat_country ) && ! empty( $vat_city ) &&
@@ -52,6 +53,8 @@ class Paddle_WC_API {
 			$data['vat_country'] = $vat_country;
 			$data['vat_city'] = $vat_city;
 			$data['vat_street'] = $vat_street;
+			// It is required for some countries.
+			$data['vat_postcode'] = $vat_postcode;
 		}
 
 		// Add the product name(s) as custom message
