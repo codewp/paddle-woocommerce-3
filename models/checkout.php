@@ -127,8 +127,9 @@ class Paddle_WC_Checkout {
 	}
 
 	public function vat_checkout_fields( $checkout ) {
-		echo '<div id="vat_checkout_fields"><h2>' . __('VAT information') . '</h2>';
+		echo '<div id="vat_checkout_fields"><h2>' . __( 'VAT information (Optional)', 'paddle' ) . '</h2>';
 		echo '<p>' . __( 'If you would like to enter your VAT information then fill out all of the below fields.', 'paddle' ) . '</p>';
+		echo '<p><a href="https://www.paddle.com/help/sell/tax/how-paddle-handles-vat-on-your-behalf" target="_blank">' . __( 'How Paddle handles VAT on your behalf', 'paddle' ) . '</a></p>';
 
 		woocommerce_form_field( 'vat_number', array(
 			'type'         => 'text',
