@@ -102,8 +102,8 @@ class Paddle_WC_Webhooks {
         }
 
         $data = array(
-            'order_id' => $order->get_id(),
-			'user_id' => $order->get_user_id(),
+            'order_id' => absint( $order->get_id() ),
+			'user_id' => absint( $order->get_user_id() ),
             'subscription_id' => $subscription_id,
             'subscription_plan_id' => isset( $_POST['subscription_plan_id'] ) ? sanitize_text_field( $_POST['subscription_plan_id'] ) : '',
             'paddle_user_id' => isset( $_POST['user_id'] ) ? sanitize_text_field( $_POST['user_id'] ) : '',
@@ -144,7 +144,7 @@ class Paddle_WC_Webhooks {
         }
 
         $data = array(
-            'id' => $subscription->id,
+            'id' => absint( $subscription->id ),
             'status' => isset( $_POST['status'] ) ? sanitize_text_field( $_POST['status'] ) : '',
             'cancel_url' => isset( $_POST['cancel_url'] ) ? esc_url_raw( $_POST['cancel_url'] ) : '',
             'update_url' => isset( $_POST['update_url'] ) ? esc_url_raw( $_POST['update_url'] ) : '',
@@ -182,7 +182,7 @@ class Paddle_WC_Webhooks {
         }
 
         $data = array(
-            'id' => $subscription->id,
+            'id' => absint( $subscription->id ),
             'status' => isset( $_POST['status'] ) ? sanitize_text_field( $_POST['status'] ) : '',
         );
 
