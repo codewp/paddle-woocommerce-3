@@ -6,8 +6,6 @@ import './style.scss';
 
 export default function App() {
 	return (
-		<>
-			<Subscriptions />
-		</>
+		<Subscriptions />
 	);
 }

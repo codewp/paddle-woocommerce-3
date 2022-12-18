@@ -11,7 +11,7 @@ class Paddle_WC_Assets {
 		global $wp;
 
 		if ( isset( $wp->query_vars['paddle-subscriptions'] ) ) {
-			$this->register_polyfills();
+			paddle_register_polyfills();
 
 			wp_enqueue_style(
 				'paddle-account-subscriptions',
@@ -50,14 +50,5 @@ class Paddle_WC_Assets {
     protected function get_path( $ext ) {
         return 'css' === $ext ? 'assets/css/' : 'assets/js/';
     }
-
-	protected function register_polyfills() {
-		$handles = array( 'element', 'i18n', 'hooks', 'api-fetch' );
-		foreach ( $handles as $handle ) {
-			if ( ! wp_script_is( 'wp-' . $handle, 'registered' ) ) {
-				wp_register_script( 'wp-' . $handle, $this->get_url( 'vendor/' . $handle, 'js' ), array(), paddle_wc()->version, true );
-			}
-		}
-	}
 
 }

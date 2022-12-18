@@ -12,7 +12,7 @@ class Paddle_WC_Admin_Assets {
         $screen_id = $screen ? $screen->id : '';
 
         if ( 'toplevel_page_asnp-paddle' === $screen_id ) {
-			$this->register_polyfills();
+			paddle_register_polyfills();
 
             wp_enqueue_style(
                 'asnp-paddle-admin',
@@ -44,14 +44,5 @@ class Paddle_WC_Admin_Assets {
     protected function get_path( $ext ) {
         return 'css' === $ext ? 'assets/css/' : 'assets/js/';
     }
-
-	protected function register_polyfills() {
-		$handles = array( 'element', 'i18n', 'hooks', 'api-fetch' );
-		foreach ( $handles as $handle ) {
-			if ( ! wp_script_is( 'wp-' . $handle, 'registered' ) ) {
-				wp_register_script( 'wp-' . $handle, $this->get_url( 'vendor/' . $handle, 'js' ), array(),  paddle_wc()->version, true );
-			}
-		}
-	}
 
 }
