@@ -8,9 +8,7 @@ class Paddle_WC_Assets {
 	}
 
 	public function load_scripts() {
-		global $wp;
-
-		if ( isset( $wp->query_vars['paddle-subscriptions'] ) ) {
+		if ( is_wc_endpoint_url( 'paddle-subscriptions' ) ) {
 			paddle_register_polyfills();
 
 			wp_enqueue_style(

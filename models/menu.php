@@ -6,11 +6,9 @@ class Paddle_Menu {
     protected $query_vars = array();
 
     public function init() {
-        if ( ! is_admin() ) {
-            add_filter( 'woocommerce_get_query_vars', array( $this, 'add_query_vars' ) );
-            add_filter( 'woocommerce_account_menu_items', array( $this, 'add_menu_item' ) );
-            add_action( 'woocommerce_account_paddle-subscriptions_endpoint', array( $this, 'endpoint_content' ) );
-        }
+		add_filter( 'woocommerce_get_query_vars', array( $this, 'add_query_vars' ) );
+		add_filter( 'woocommerce_account_menu_items', array( $this, 'add_menu_item' ) );
+		add_action( 'woocommerce_account_paddle-subscriptions_endpoint', array( $this, 'endpoint_content' ) );
 
         $this->init_query_vars();
     }
