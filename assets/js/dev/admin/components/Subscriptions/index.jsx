@@ -105,6 +105,7 @@ export default function Subscriptions() {
 															? subscription.order_url
 															: '#'
 													}
+													target="_blank"
 												>
 													#
 													{ subscription.order_id +

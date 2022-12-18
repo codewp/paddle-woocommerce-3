@@ -121,7 +121,8 @@ class Paddle_Subscriptions_Controller extends Paddle_Base_Controller {
 		$user = get_user_by( 'id', absint( $order->get_user_id() ) );
 
 		return array(
-			'order_id'            => $order->get_id(),
+			'order_id'            => absint( $order->get_id() ),
+			'order_url'           => $order->get_edit_order_url(),
 			'date'                => wc_format_datetime( $order->get_date_created() ),
 			'date_time'           => esc_attr( $order->get_date_created()->date( 'c' ) ),
 			'total'               => $order->get_formatted_order_total(),
@@ -145,7 +146,8 @@ class Paddle_Subscriptions_Controller extends Paddle_Base_Controller {
 		}
 
 		return array(
-			'order_id'            => $order->get_id(),
+			'order_id'            => absint( $order->get_id() ),
+			'order_url'           => $order->get_view_order_url(),
 			'date'                => wc_format_datetime( $order->get_date_created() ),
 			'date_time'           => esc_attr( $order->get_date_created()->date( 'c' ) ),
 			'total'               => $order->get_formatted_order_total(),

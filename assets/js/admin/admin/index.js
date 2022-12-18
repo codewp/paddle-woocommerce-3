@@ -266,7 +266,8 @@ function Subscriptions() {
         "data-title": value,
         key: subscription.order_id + '_' + key
       }, 'order-number' === key && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("a", {
-        href: subscription.order_url ? subscription.order_url : '#'
+        href: subscription.order_url ? subscription.order_url : '#',
+        target: "_blank"
       }, "#", subscription.order_id + (subscription.user_name ? ' ' + subscription.user_name : '')), ('date' === key || 'next_bill_date' === key) && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("time", {
         dateTime: subscription[key + '_time']
       }, subscription[key]), 'actions' === key && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default().createElement("a", {
