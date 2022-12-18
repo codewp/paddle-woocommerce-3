@@ -35,7 +35,27 @@ class Paddle_WC_API {
 		$data['customer_postcode']     = $customer->get_billing_postcode();
 		$data['customer_country']      = $customer->get_billing_country();
 		$data['passthrough']           = base64_encode( json_encode( array( 'order_id' => $order->get_id() ) ) );
-		$data['vat_number']            = sanitize_text_field( $order->get_meta( '_billing_vat_number' ) );
+
+		// VAT information.
+		$vat_number = sanitize_text_field( trim( $order->get_meta( 'vat_number' ) ) );
+		$vat_company_name = sanitize_text_field( trim( $order->get_meta( 'vat_company_name' ) ) );
+		$vat_country = sanitize_text_field( trim( $order->get_meta( 'vat_country' ) ) );
+		$vat_city = sanitize_text_field( trim( $order->get_meta( 'vat_city' ) ) );
+		$vat_street = sanitize_text_field( trim( $order->get_meta( 'vat_street' ) ) );
+		$vat_postcode = sanitize_text_field( trim( $order->get_meta( 'vat_postcode' ) ) );
+		if (
+			! empty( $vat_number ) && ! empty( $vat_company_name ) &&
+			! empty( $vat_country ) && ! empty( $vat_city ) &&
+			! empty( $vat_street )
+		) {
+			$data['vat_number'] = $vat_number;
+			$data['vat_company_name'] = $vat_company_name;
+			$data['vat_country'] = $vat_country;
+			$data['vat_city'] = $vat_city;
+			$data['vat_street'] = $vat_street;
+			// It is required for some countries.
+			$data['vat_postcode'] = $vat_postcode;
+		}
 
 		// Add the product name(s) as custom message
 		if($settings->get('send_names') == 'yes') {
