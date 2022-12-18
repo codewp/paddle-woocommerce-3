@@ -103,6 +103,7 @@ class Paddle_WC_Webhooks {
 
         $data = array(
             'order_id' => $order->get_id(),
+			'user_id' => $order->get_user_id(),
             'subscription_id' => $subscription_id,
             'subscription_plan_id' => isset( $_POST['subscription_plan_id'] ) ? sanitize_text_field( $_POST['subscription_plan_id'] ) : '',
             'paddle_user_id' => isset( $_POST['user_id'] ) ? sanitize_text_field( $_POST['user_id'] ) : '',

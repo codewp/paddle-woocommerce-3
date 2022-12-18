@@ -30,6 +30,7 @@ class Paddle_DB_Subscriptions extends Paddle_DB {
 		return array(
 			'id'                   => '%d',
             'order_id'             => '%d',
+			'user_id'              => '%d',
             'subscription_id'      => '%s',
             'subscription_plan_id' => '%s',
             'paddle_user_id'       => '%s',
@@ -147,7 +148,7 @@ class Paddle_DB_Subscriptions extends Paddle_DB {
 		$args['order']   = esc_sql( $args['order'] );
 
 		$select_args = array();
-		$where       = ' WHERE 1=1';
+		$where       = 'WHERE 1=1';
 
 		// Specific conditions.
 		if ( ! empty( $args['id'] ) ) {
@@ -179,24 +180,8 @@ class Paddle_DB_Subscriptions extends Paddle_DB {
 
 		// Select specific user subscriptions.
 		if ( ! empty( $args['user_id' ] ) && 0 < (int) $args['user_id'] ) {
-			$customer_orders = wc_get_orders(
-				array(
-					'customer' => (int) $args['user_id'],
-					'return'   => 'ids',
-				)
-			);
-			if ( empty( $customer_orders ) ) {
-				if ( empty( $args['paginate'] ) ) {
-					return array();
-				}
-				return array(
-					'items' => array(),
-					'total' => 0,
-					'pages' => 0,
-				);
-			}
-
-			$where .= ' AND `order_id` IN (' . implode( ',', array_map( 'absint', $customer_orders ) ) . ')';
+			$where .= ' AND `user_id` = %d';
+			$select_args[] = absint( $args['user_id'] );
 		}
 
 		$select_args[] = absint( $args['offset'] );

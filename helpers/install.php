@@ -70,6 +70,7 @@ function paddle_get_schema() {
 CREATE TABLE {$wpdb->prefix}paddle_subscriptions (
 id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 order_id BIGINT(20) UNSIGNED NOT NULL,
+user_id BIGINT(20) UNSIGNED NOT NULL,
 subscription_id varchar(255) NOT NULL,
 subscription_plan_id varchar(255) NOT NULL,
 paddle_user_id varchar(255) NOT NULL,
