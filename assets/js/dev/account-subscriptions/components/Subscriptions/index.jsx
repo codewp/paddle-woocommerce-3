@@ -66,7 +66,7 @@ export default function Subscriptions() {
 					<tbody>
 						{ subscriptions.map( ( subscription ) => (
 							<tr
-								className={ `woocommerce-orders-table__row woocommerce-orders-table__row--status-${ subscription.status } order` }
+								className={ `woocommerce-orders-table__row woocommerce-orders-table__row-status-${ subscription.status } order` }
 								key={ subscription.order_id }
 							>
 								{ columns.map( ( { key, value } ) => {
@@ -89,7 +89,12 @@ export default function Subscriptions() {
 
 									return (
 										<td
-											className={ `woocommerce-orders-table__cell woocommerce-orders-table__cell-${ key }` }
+											className={
+												`woocommerce-orders-table__cell woocommerce-orders-table__cell-${ key }` +
+												( 'status' === key
+													? ` asnp-paddle-status-${ subscription[ key ] }`
+													: '' )
+											}
 											data-title={ value }
 											key={
 												subscription.order_id +
