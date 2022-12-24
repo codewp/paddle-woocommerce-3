@@ -34,7 +34,7 @@
 		"@wordpress/babel-plugin-import-jsx-pragma": "3.1.0",
 		"@wordpress/babel-preset-default": "6.4.1",
 		"autoprefixer": "10.4.2",
-		"babel-eslint": "^10.1.0",
+		"babel-eslint": "10.1.0",
 		"babel-loader": "8.2.3",
 		"babel-plugin-import": "1.13.3",
 		"babel-preset-react-app": "10.0.1",
@@ -42,7 +42,6 @@
 		"css-loader": "6.5.1",
 		"eslint-plugin-jsx-a11y": "6.5.1",
 		"eslint-plugin-react": "7.28.0",
-		"eslint": "8.7.0",
 		"mini-css-extract-plugin": "2.5.2",
 		"node-watch": "0.7.2",
 		"postcss": "8.4.5",
@@ -51,6 +50,8 @@
 		"prettier": "npm:wp-prettier@2.0.5",
 		"stylelint": "14.2.0",
 		"webpack": "5.66.0",
-		"webpack-cli": "4.9.1"
+		"webpack-cli": "4.9.1",
+		"terser-webpack-plugin": "5.3.5",
+		"css-minimizer-webpack-plugin": "4.0.0"
 	}
 }

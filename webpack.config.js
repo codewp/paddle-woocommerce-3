@@ -1,4 +1,6 @@
 const MiniCssExtractPlugin = require( 'mini-css-extract-plugin' );
+const TerserPlugin = require( 'terser-webpack-plugin' );
+const CssMinimizerPlugin = require( 'css-minimizer-webpack-plugin' );
 const path = require( 'path' );
 const { get } = require( 'lodash' );
 
@@ -122,7 +124,16 @@ const frontConfig = {
 	],
 };
 
-if ( 'production' !== NODE_ENV ) {
+const productionConfig = {
+	optimization: {
+		minimizer: [ new TerserPlugin(), new CssMinimizerPlugin() ],
+	},
+};
+
+if ( 'production' === NODE_ENV ) {
+	adminConfig = { ...adminConfig, ...productionConfig };
+	frontConfig = { ...frontConfig, ...productionConfig };
+} else {
 	adminConfig.devtool = process.env.SOURCEMAP || 'source-map';
 	frontConfig.devtool = process.env.SOURCEMAP || 'source-map';
 }
