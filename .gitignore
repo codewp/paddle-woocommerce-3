@@ -63,3 +63,5 @@ blocks.ini
 # Ignore dev files.
 /assets/css/account-subscriptions/*
 /assets/js/account-subscriptions/*
+/assets/css/admin/admin/*
+/assets/js/admin/admin/*
