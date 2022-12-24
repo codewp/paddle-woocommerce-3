@@ -78,15 +78,20 @@ function paddle_wc_renew_order_downloadable_files( $order ) {
 		throw new Exception( 'Order not found.' );
 	}
 
-	$files = $order->get_downloadable_items();
-	if ( empty( $files ) ) {
+	$data_store = WC_Data_Store::load( 'customer-download' );
+	$downloads  = $data_store->get_downloads(
+		array(
+			'order_id' => $order->get_id(),
+			'orderby'  => 'product_id',
+		)
+	);
+	if ( empty( $downloads ) ) {
 		return;
 	}
 
-	foreach ( $files as $file ) {
-		$product  = wc_get_product( $file['product_id'] );
-		$download = new WC_Customer_Download( $file['download_id'] );
-		if ( ! $product || ! $download ) {
+	foreach ( $downloads as $download ) {
+		$product = wc_get_product( $download->get_product_id() );
+		if ( ! $product ) {
 			continue;
 		}
 
