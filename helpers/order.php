@@ -64,3 +64,34 @@ function paddle_wc_get_order_by_paddle_order( $paddle_order_id ) {
 
     return new WC_Order( $order_id );
 }
+
+/**
+ * Renew order downloadable files expire time.
+ *
+ * @param  int|WC_Order $order
+ *
+ * @return void
+ */
+function paddle_wc_renew_order_downloadable_files( $order ) {
+	$order = is_numeric( $order ) ? wc_get_order( $order ) : $order;
+	if ( ! $order || ! $order instanceof WC_Order ) {
+		throw new Exception( 'Order not found.' );
+	}
+
+	$files = $order->get_downloadable_items();
+	if ( empty( $files ) ) {
+		return;
+	}
+
+	foreach ( $files as $file ) {
+		$product  = wc_get_product( $file['product_id'] );
+		$download = new WC_Customer_Download( $file['download_id'] );
+		if ( ! $product || ! $download ) {
+			continue;
+		}
+
+		$expiry = $product->get_download_expiry();
+		$download->set_access_expires( strtotime( current_time( 'mysql', true ) . ' + ' . $expiry . ' DAY' ) );
+		$download->save();
+	}
+}
