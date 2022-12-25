@@ -9,7 +9,9 @@ class Paddle_WC_Settings
 	const API_GENERATE_PAY_LINK_URL = 'api/2.0/product/generate_pay_link';
 	const API_GET_PUBLIC_KEY_URL = 'api/2.0/user/get_public_key';
 	const PADDLE_ROOT_URL = 'https://vendors.paddle.com/';
+	const SANDBOX_PADDLE_ROOT_URL = 'https://sandbox-vendors.paddle.com/';
 	const PADDLE_CHECKOUT_ROOT_URL = 'https://checkout.paddle.com/';
+	const SANDBOX_CHECKOUT_ROOT_URL = 'https://sandbox-checkout.paddle.com/';
 	const INTEGRATE_URL = 'vendor/external/integrate';
 	const SIGNUP_LINK = 'https://www.paddle.com/sell?utm_source=WooCommerce&utm_campaign=WooCommerce&utm_medium=WooCommerce&utm_term=sell';
 

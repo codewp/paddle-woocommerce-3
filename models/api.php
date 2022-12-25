@@ -77,15 +77,17 @@ class Paddle_WC_API {
 		}
 
 		// Get pay link from Paddle API
-		$post_url = Paddle_WC_Settings::PADDLE_ROOT_URL . Paddle_WC_Settings::API_GENERATE_PAY_LINK_URL;
+		$post_url = ( 'yes' === $settings->get( 'sandbox_enabled', 'no' ) ? Paddle_WC_Settings::SANDBOX_PADDLE_ROOT_URL : Paddle_WC_Settings::PADDLE_ROOT_URL ) . Paddle_WC_Settings::API_GENERATE_PAY_LINK_URL;
 		$api_start_time = microtime(true);
-		$api_call_response = wp_remote_post($post_url, array(
-			'method' => 'POST',
-			'timeout' => 45,
-			'httpversion' => '1.1',
-			'blocking' => true,
-			'body' => $data,
-			'sslverify' => false
+		$api_call_response = wp_remote_post(
+			$post_url,
+			array(
+				'method' => 'POST',
+				'timeout' => 45,
+				'httpversion' => '1.1',
+				'blocking' => true,
+				'body' => $data,
+				'sslverify' => false,
 			)
 		);
 		$api_duration = (microtime(true) - $api_start_time);
