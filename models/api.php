@@ -71,8 +71,8 @@ class Paddle_WC_API {
 
 		// Add subscription paln if exist.
 		$subscription_plan_id = $settings->get( 'subscription_plan_id', '' );
-		if ( ! empty( $subscription_plan_id ) ) {
-			$data['product_id'] = sanitize_text_field( $subscription_plan_id );
+		if ( ! empty( $subscription_plan_id ) && 0 < absint( $subscription_plan_id ) ) {
+			$data['product_id'] = absint( $subscription_plan_id );
 			$data['recurring_prices'] = $data['prices'];
 		}
 
