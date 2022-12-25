@@ -28,7 +28,6 @@ class Paddle_WC_API {
 		$data['return_url']            = static::get_return_url($order);
 		$data['title']                 = str_replace('{#order}', $order->get_id(), $settings->get('product_name'));
 		$data['image_url']             = $settings->get('product_icon');
-		$data['webhook_url']           = static::get_webhook_url($order->get_id());
 		$data['discountable']          = 0;
 		$data['quantity_variable']     = 0;
 		$data['customer_email']        = $order->get_billing_email();
@@ -74,6 +73,8 @@ class Paddle_WC_API {
 		if ( ! empty( $subscription_plan_id ) && 0 < absint( $subscription_plan_id ) ) {
 			$data['product_id'] = absint( $subscription_plan_id );
 			$data['recurring_prices'] = $data['prices'];
+		} else {
+			$data['webhook_url'] = static::get_webhook_url($order->get_id());
 		}
 
 		// Get pay link from Paddle API
