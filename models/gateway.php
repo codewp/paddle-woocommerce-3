@@ -268,6 +268,13 @@ class Paddle_WC_Gateway extends WC_Payment_Gateway {
 				'label' => __('Enable', 'woocommerce'),
 				'default' => $this->enabled ? 'yes' : 'no'
 			),
+			'sandbox_enabled' => array(
+				'title' => __( 'Sandbox Enabled?', 'paddle' ),
+				'description' => __( 'Enable Paddle sandbox mode.', 'paddle' ),
+				'type' => 'checkbox',
+				'label' => __( 'Enable Sandbox', 'paddle' ),
+				'default' => 'no',
+			),
 			'title' => array(
 				'title' => __('Title', 'woocommerce'),
 				'type' => 'text',
@@ -307,8 +314,8 @@ class Paddle_WC_Gateway extends WC_Payment_Gateway {
 				'default' => get_bloginfo('name') . ' Checkout'
 			),
 			'subscription_plan_id' => array(
-				'title' => __('Subscription Plan ID'),
-				'description' => __('The subscription plan ID to use in the paddle checkout'),
+				'title' => __( 'Subscription Plan ID', 'paddle' ),
+				'description' => __( 'The subscription plan ID to use in the paddle checkout', 'paddle' ),
 				'type' => 'text',
 				'default' => ''
 			),
@@ -331,7 +338,7 @@ class Paddle_WC_Gateway extends WC_Payment_Gateway {
 				'type' => 'checkbox',
 				'label' => __('Prices Include VAT', 'woocommerce'),
 				'default' => 'yes'
-			)
+			),
 		);
 	}
 

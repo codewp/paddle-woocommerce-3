@@ -67,7 +67,8 @@ class Paddle_WC_Checkout {
 		$endpoint = is_wc_endpoint_url('order-pay') ? 'paddle_checkout_pay' : 'paddle_checkout';
 		$paddle_data = array(
 			'order_url' => $this->get_ajax_endpoint_path($endpoint),
-			'vendor' => $this->settings->get('paddle_vendor_id')
+			'vendor' => $this->settings->get('paddle_vendor_id'),
+			'sanbox_enabled' => $this->settigns->get('sandbox_enabled', 'no'),
 		);
 		wp_localize_script('paddle-bootstrap', 'paddle_data', $paddle_data);
 		wp_enqueue_script('paddle-bootstrap');
