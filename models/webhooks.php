@@ -190,16 +190,16 @@ class Paddle_WC_Webhooks {
         }
 
 		try {
+			$order->payment_complete();
 			$this->update_subscription( $subscription_id, $_POST );
+			$order->add_meta_data( '_paddle_order_id', $paddle_order_id, true );
+			$order->add_order_note( 'Paddle Order ID: ' . $paddle_order_id );
+			paddle_wc_renew_order_downloadable_files( $order );
 		} catch ( Exception $e ) {
 			if ( paddle_wc()->log_enabled ) {
                 paddle_wc()->log->error( $e->getMessage(), array( 'source' => 'paddle' ) );
             }
 		}
-
-        $order->add_meta_data( '_paddle_order_id', $paddle_order_id, true );
-        $order->add_order_note( 'Paddle Order ID: ' . $paddle_order_id );
-		paddle_wc_renew_order_downloadable_files( $order );
 
 		do_action( 'paddle_wc_subscription_payment_succeeded', $order, $subscription_id, $paddle_order_id, $_POST );
 
