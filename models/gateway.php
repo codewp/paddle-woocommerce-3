@@ -339,6 +339,14 @@ class Paddle_WC_Gateway extends WC_Payment_Gateway {
 				'label' => __('Prices Include VAT', 'woocommerce'),
 				'default' => 'yes'
 			),
+			'is_recoverable' => array(
+				'title' => __( 'Is Recoverable?', 'paddle' ),
+				'description' => __( 'Specifies if checkout recovery emails can be sent to users who abandon the checkout process after entering their email address.', 'paddle' ) . '<br/>'
+								. __( 'An additional 10% transaction fee applies to checkouts we recover.', 'paddle' ),
+				'type' => 'checkbox',
+				'label' => __( 'Enable', 'paddle' ),
+				'default' => 'yes'
+			),
 		);
 	}
 

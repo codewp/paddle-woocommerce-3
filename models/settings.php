@@ -25,6 +25,7 @@ class Paddle_WC_Settings
 		'vat_included_in_price' => 'yes',
 		'subscription_plan_id' => '',
 		'sandbox_enabled' => 'no',
+		'is_recoverable' => 'yes',
 	);
 	public $supported_currencies = array(
 		'USD',

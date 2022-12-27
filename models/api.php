@@ -22,18 +22,19 @@ class Paddle_WC_API {
 
         // Data to be sent to Paddle gateway
 		$data = array();
-		$data['vendor_id']             = $settings->get('paddle_vendor_id');
-		$data['vendor_auth_code']      = $settings->get('paddle_api_key');
-        $data['prices']                = array(get_woocommerce_currency().':'.$order_total);   // Why was tax being removed?
-		$data['return_url']            = static::get_return_url($order);
-		$data['title']                 = str_replace('{#order}', $order->get_id(), $settings->get('product_name'));
-		$data['image_url']             = $settings->get('product_icon');
-		$data['discountable']          = 0;
-		$data['quantity_variable']     = 0;
-		$data['customer_email']        = $order->get_billing_email();
-		$data['customer_postcode']     = $customer->get_billing_postcode();
-		$data['customer_country']      = $customer->get_billing_country();
-		$data['passthrough']           = base64_encode( json_encode( array( 'order_id' => $order->get_id() ) ) );
+		$data['vendor_id']         = $settings->get('paddle_vendor_id');
+		$data['vendor_auth_code']  = $settings->get('paddle_api_key');
+        $data['prices']            = array(get_woocommerce_currency().':'.$order_total);   // Why was tax being removed?
+		$data['return_url']        = static::get_return_url($order);
+		$data['title']             = str_replace('{#order}', $order->get_id(), $settings->get('product_name'));
+		$data['image_url']         = $settings->get('product_icon');
+		$data['discountable']      = 0;
+		$data['quantity_variable'] = 0;
+		$data['customer_email']    = $order->get_billing_email();
+		$data['customer_postcode'] = $customer->get_billing_postcode();
+		$data['customer_country']  = $customer->get_billing_country();
+		$data['passthrough']       = base64_encode( json_encode( array( 'order_id' => $order->get_id() ) ) );
+		$data['is_recoverable']    = 'yes' === $settings->get( 'is_recoverable', 'yes' ) ? 1 : 0;
 
 		// VAT information.
 		$vat_number = sanitize_text_field( trim( $order->get_meta( 'vat_number' ) ) );
