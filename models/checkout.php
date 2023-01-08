@@ -68,7 +68,7 @@ class Paddle_WC_Checkout {
 		$paddle_data = array(
 			'order_url' => $this->get_ajax_endpoint_path($endpoint),
 			'vendor' => $this->settings->get('paddle_vendor_id'),
-			'sanbox_enabled' => $this->settings->get('sandbox_enabled', 'no'),
+			'sandbox_enabled' => $this->settings->get('sandbox_enabled', 'no'),
 		);
 		wp_localize_script('paddle-bootstrap', 'paddle_data', $paddle_data);
 		wp_enqueue_script('paddle-bootstrap');
