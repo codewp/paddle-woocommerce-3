@@ -104,25 +104,16 @@ class Paddle_WC_Webhooks {
             return;
         }
 
-        $data = array(
-            'order_id' => absint( $order->get_id() ),
-			'user_id' => absint( $order->get_user_id() ),
-            'subscription_id' => $subscription_id,
-            'subscription_plan_id' => isset( $_POST['subscription_plan_id'] ) ? sanitize_text_field( $_POST['subscription_plan_id'] ) : '',
-            'paddle_user_id' => isset( $_POST['user_id'] ) ? sanitize_text_field( $_POST['user_id'] ) : '',
-            'status' => isset( $_POST['status'] ) ? sanitize_text_field( $_POST['status'] ) : '',
-            'cancel_url' => isset( $_POST['cancel_url'] ) ? esc_url_raw( $_POST['cancel_url'] ) : '',
-            'update_url' => isset( $_POST['update_url'] ) ? esc_url_raw( $_POST['update_url'] ) : '',
-            'next_bill_date' => isset( $_POST['next_bill_date'] ) ? sanitize_text_field( $_POST['next_bill_date'] ) : '',
-            'currency' => isset( $_POST['currency'] ) ? sanitize_text_field( $_POST['currency'] ) : '',
-            'unit_price' => isset( $_POST['unit_price'] ) ? sanitize_text_field( $_POST['unit_price'] ) : '',
-        );
-
-        $id = paddle_wc()->subscriptions->add( $data );
-
-        if ( 0 < $id ) {
-            do_action( 'paddle_wc_subscription_created', $id, $data, $order );
-        }
+		try {
+			$id = $this->add_subscription( $subscription_id, $_POST, $order );
+			if ( 0 < $id ) {
+				do_action( 'paddle_wc_subscription_created', $id, $subscription_id, $_POST );
+			}
+		} catch ( Exception $e ) {
+			if ( paddle_wc()->log_enabled ) {
+                paddle_wc()->log->error( $e->getMessage(), array( 'source' => 'paddle' ) );
+            }
+		}
 
         $this->set_status_header( 200 );
     }
@@ -138,7 +129,7 @@ class Paddle_WC_Webhooks {
         }
 
 		try {
-			$id = $this->update_subscription( $subscription_id, $_POST );
+			$id = $this->add_subscription( $subscription_id, $_POST );
 			if ( 0 < $id ) {
 				do_action( 'paddle_wc_subscription_updated', $id, $subscription_id, $_POST );
 			}
@@ -162,7 +153,7 @@ class Paddle_WC_Webhooks {
         }
 
 		try {
-			$id = $this->update_subscription( $subscription_id, $_POST );
+			$id = $this->add_subscription( $subscription_id, $_POST );
 			if ( 0 < $id ) {
 				do_action( 'paddle_wc_subscription_cancelled', $id, $subscription_id, $_POST );
 			}
@@ -191,10 +182,13 @@ class Paddle_WC_Webhooks {
 
 		try {
 			$order->payment_complete();
-			$this->update_subscription( $subscription_id, $_POST );
+			$id = $this->add_subscription( $subscription_id, $_POST, $order );
 			$order->add_meta_data( '_paddle_order_id', $paddle_order_id, true );
 			$order->add_order_note( 'Paddle Order ID: ' . $paddle_order_id );
 			paddle_wc_renew_order_downloadable_files( $order );
+			if ( 0 < $id ) {
+				do_action( 'paddle_wc_subscription_payment_succeeded', $id, $subscription_id, $_POST );
+			}
 		} catch ( Exception $e ) {
 			if ( paddle_wc()->log_enabled ) {
                 paddle_wc()->log->error( $e->getMessage(), array( 'source' => 'paddle' ) );
@@ -224,7 +218,10 @@ class Paddle_WC_Webhooks {
         }
 
 		try {
-			$this->update_subscription( $subscription_id, $_POST );
+			$id = $this->add_subscription( $subscription_id, $_POST, $order );
+			if ( 0 < $id ) {
+				do_action( 'paddle_wc_subscription_payment_refunded', $id, $subscription_id, $_POST );
+			}
 		} catch ( Exception $e ) {
 			if ( paddle_wc()->log_enabled ) {
                 paddle_wc()->log->error( $e->getMessage(), array( 'source' => 'paddle' ) );
@@ -244,7 +241,7 @@ class Paddle_WC_Webhooks {
         }
 	}
 
-	protected function update_subscription( $subscription_id, $args ) {
+	protected function add_subscription( $subscription_id, $args, $order = null ) {
 		if ( empty( $subscription_id ) ) {
 			throw new Exception( 'Subscription update: Subscription ID is required.' );
 		}
@@ -253,15 +250,34 @@ class Paddle_WC_Webhooks {
 			throw new Exception( 'Subscription update: Update args are required to update the subscription #' . sanitize_text_field( $subscription_id ) );
 		}
 
+		$data = $this->sanitize_subscription_data( $args );
+		if ( empty( $data ) ) {
+			throw new Exception( 'Subscription update: There is not any data to update the subscription #' . absint( $subscription->id ) . ' for the paddle subscription #' . sanitize_text_field( $subscription_id ) );
+		}
+
+		if ( $order ) {
+			$data['order_id'] = absint( $order->get_id() );
+			$data['user_id'] = absint( $order->get_user_id() );
+		}
+
 		$subscription = paddle_wc()->subscriptions->get_item_by( 'subscription_id', $subscription_id );
-        if ( ! $subscription ) {
-			throw new Exception( 'Subscription update: subscription not found for Paddle subscription #' . sanitize_text_field( $subscription_id ) );
+        if ( $subscription ) {
+			$data['id'] = absint( $subscription->id );
         }
+
+		return paddle_wc()->subscriptions->add( $data );
+	}
+
+	protected function sanitize_subscription_data( $args ) {
+		if ( empty( $args ) ) {
+			throw new Exception( 'Subscription data is empty.' );
+		}
 
 		$data = array();
 		foreach ( $args as $key => $value ) {
 			switch ( $key ) {
 				case 'status':
+				case 'subscription_id':
 				case 'subscription_plan_id':
 				case 'paddle_user_id':
 				case 'next_bill_date':
@@ -274,16 +290,14 @@ class Paddle_WC_Webhooks {
 				case 'update_url':
 					$data[ $key ] = esc_url_raw( $value );
 					break;
+
+				case 'user_id':
+					$data[ 'paddle_' . $key ] = sanitize_text_field( $value );
+					break;
 			}
 		}
 
-		if ( empty( $data ) ) {
-			throw new Exception( 'Subscription update: There is not any data to update the subscription #' . absint( $subscription->id ) . ' for the paddle subscription #' . sanitize_text_field( $subscription_id ) );
-		}
-
-		$data['id'] = absint( $subscription->id );
-
-		return paddle_wc()->subscriptions->add( $data );
+		return $data;
 	}
 
 }

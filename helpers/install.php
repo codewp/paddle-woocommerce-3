@@ -77,11 +77,11 @@ paddle_user_id varchar(255) NOT NULL,
 status varchar(20) NOT NULL,
 cancel_url TEXT NOT NULL,
 update_url TEXT NOT NULL,
-next_bill_date DATETIME NOT NULL default '0000-00-00 00:00:00',
+next_bill_date DATETIME NULL default null,
 currency char(3) NOT NULL,
 unit_price varchar(20) NOT NULL,
 PRIMARY KEY (id),
-UNIQUE KEY subscription_id (subscription_id(191)
+UNIQUE KEY subscription_id (subscription_id(191))
 ) $collate;";
 
     return $tables;

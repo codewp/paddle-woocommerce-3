@@ -20,7 +20,7 @@ if (!class_exists('Paddle_WC')) :
  */
 final class Paddle_WC {
 
-	public $version = '4.0.0';
+	public $version = '4.1.0';
 
 	/**
 	 * Instance of our settings object.

@@ -51,9 +51,7 @@ class Paddle_DB_Subscriptions extends Paddle_DB {
 	 * @return array
 	 */
 	public function get_column_defaults() {
-		return array(
-            'next_bill_date' => '0000-00-00 00:00:00',
-        );
+		return array();
 	}
 
 	/**
