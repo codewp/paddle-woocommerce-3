@@ -69,6 +69,16 @@ class Paddle_WC_Settings
 		update_option(static::PLUGIN_ID . '_settings', $this->settings);
 	}
 
+	public function get_paddle_root_url() {
+		return 'yes' === $this->get( 'sandbox_enabled', 'no' ) ?
+			self::SANDBOX_PADDLE_ROOT_URL : self::PADDLE_ROOT_URL;
+	}
+
+	public function get_paddle_checkout_url() {
+		return 'yes' === $this->get( 'sandbox_enabled', 'no' ) ?
+			self::SANDBOX_CHECKOUT_ROOT_URL : self::PADDLE_CHECKOUT_ROOT_URL;
+	}
+
 	/**
 	 * Get the vendor key, querying if necessary
 	 *
@@ -100,7 +110,7 @@ class Paddle_WC_Settings
 		$data['vendor_id'] = $vendorId;
 		$data['vendor_auth_code'] = $vendorApiKey;
 
-		$apiCallResponse = wp_remote_get(self::PADDLE_ROOT_URL . self::API_GET_PUBLIC_KEY_URL, array(
+		$apiCallResponse = wp_remote_get($this->get_paddle_root_url() . self::API_GET_PUBLIC_KEY_URL, array(
 			'method' => 'POST',
 			'timeout' => 45,
 			'httpversion' => '1.1',

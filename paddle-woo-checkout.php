@@ -27,7 +27,7 @@ final class Paddle_WC {
 	 *
 	 * @var Paddle_WC_Settings
 	 */
-	private $settings;
+	public $settings;
 
 	/**
 	 * Instance of our checkout handler.

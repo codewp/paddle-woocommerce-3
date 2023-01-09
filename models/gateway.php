@@ -84,7 +84,7 @@ class Paddle_WC_Gateway extends WC_Payment_Gateway {
 	 */
 	public function on_admin_enqueue_scripts() {
 		wp_register_script('paddle-helpers', plugins_url('../assets/js/paddle-helpers.js', __FILE__), array('jquery'));
-		$integration_url = Paddle_WC_Settings::PADDLE_ROOT_URL . Paddle_WC_Settings::INTEGRATE_URL . '?' . http_build_query(array(
+		$integration_url = $this->paddle_settings->get_paddle_root_url() . Paddle_WC_Settings::INTEGRATE_URL . '?' . http_build_query(array(
 			'app_name' => 'WooCommerce Paddle Payment Gateway',
 			'app_description' => 'WooCommerce Paddle Payment Gateway Plugin. Site name: ' . get_bloginfo('name'),
 			'app_icon' => plugins_url('../assets/images/woo.png', __FILE__)
