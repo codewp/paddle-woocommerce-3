@@ -34,7 +34,7 @@ class Paddle_Subscriptions_Controller extends Paddle_Base_Controller {
 	}
 
 	public function get_account_items_permissions_check( $request ) {
-		if ( ! wc_rest_check_post_permissions( 'shop_order', 'read' ) ) {
+		if ( ! is_user_logged_in() || ! current_user_can( 'read' ) ) {
 			return new \WP_Error( 'woocommerce_paddle_rest_cannot_view', __( 'Sorry, you cannot list resources.', 'paddle' ), array( 'status' => rest_authorization_required_code() ) );
 		}
 
