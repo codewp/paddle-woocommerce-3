@@ -119,8 +119,6 @@ class Paddle_Subscriptions_Controller extends Paddle_Base_Controller {
 			throw new \Exception( 'Order not found.' );
 		}
 
-		$user = get_user_by( 'id', absint( $order->get_user_id() ) );
-
 		return array(
 			'order_id'            => absint( $order->get_id() ),
 			'order_url'           => $order->get_edit_order_url(),
@@ -131,8 +129,8 @@ class Paddle_Subscriptions_Controller extends Paddle_Base_Controller {
 			'next_bill_date_time' => ! empty( $item->next_bill_date ) ? wc_string_to_datetime( $item->next_bill_date )->date( 'c' ) : '',
 			'cancel_url'          => ! empty( $item->cancel_url ) ? esc_url( $item->cancel_url ) : '',
 			'status'              => ! empty( $item->status ) ? sanitize_text_field( $item->status ) : '',
-			'user_name'           => $user->display_name,
-			'user_email'          => $user->user_email,
+			'user_name'           => ! empty( $item->display_name ) ? sanitize_text_field( $item->display_name ) : '',
+			'user_email'          => ! empty( $item->user_email ) ? sanitize_email( $item->user_email ) : '',
 		);
 	}
 

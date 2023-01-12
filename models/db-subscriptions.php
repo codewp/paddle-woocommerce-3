@@ -146,6 +146,7 @@ class Paddle_DB_Subscriptions extends Paddle_DB {
 		$args['order']   = esc_sql( $args['order'] );
 
 		$select_args = array();
+		$join        = "LEFT JOIN {$wpdb->prefix}users u ON (s.user_id = u.ID)";
 		$where       = 'WHERE 1=1';
 
 		// Specific conditions.
@@ -166,8 +167,10 @@ class Paddle_DB_Subscriptions extends Paddle_DB {
 
 		// Search.
 		if ( ! empty( $args['search'] ) ) {
-			$where         .= ' AND (`order_id` LIKE %s OR LOWER(`subscription_id`) LIKE %s OR LOWER(`subscription_plan_id`) LIKE %s OR LOWER(`paddle_user_id`) LIKE %s)';
-			$select_args[] = '%' . $wpdb->esc_like( strtolower( sanitize_text_field( $args['search'] ) ) ) . '%';
+			$where .= " AND (`order_id` LIKE %s OR LOWER(s.`subscription_id`) LIKE %s OR LOWER(s.`subscription_plan_id`) LIKE %s OR LOWER(s.`paddle_user_id`) LIKE %s OR LOWER(u.`display_name`) LIKE %s OR LOWER(u.`user_email`) LIKE %s)";
+			for ( $i = 0; $i < 6; $i++ ) {
+				$select_args[] = '%' . $wpdb->esc_like( strtolower( sanitize_text_field( $args['search'] ) ) ) . '%';
+			}
 		}
 
 		// Status.
@@ -185,7 +188,7 @@ class Paddle_DB_Subscriptions extends Paddle_DB {
 		$select_args[] = absint( $args['offset'] );
 		$select_args[] = absint( $args['number'] );
 
-		$items = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $this->table_name $where ORDER BY {$args['orderby']} {$args['order']} LIMIT %d,%d;", $select_args ), $args['output'] );
+		$items = $wpdb->get_results( $wpdb->prepare( "SELECT s.*, u.display_name, u.user_email FROM $this->table_name s $join $where ORDER BY {$args['orderby']} {$args['order']} LIMIT %d,%d;", $select_args ), $args['output'] );
 		if ( empty( $items ) ) {
 			if ( empty( $args['paginate'] ) ) {
 				return array();
@@ -202,8 +205,7 @@ class Paddle_DB_Subscriptions extends Paddle_DB {
 			return $items;
 		}
 
-		$total = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT( $this->primary_key ) FROM $this->table_name $where", $select_args ) );
-
+		$total = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM (SELECT DISTINCT s.`$this->primary_key` FROM {$this->table_name} s {$join} {$where} GROUP BY s.`$this->primary_key`) qt" ) );
 		return array(
 			'items' => $items,
 			'total' => absint( $total ),
