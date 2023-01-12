@@ -33,9 +33,7 @@ class Paddle_WC_Admin_Menu
 
 	public function create_menu() {
 		?>
-		<div id="asnp-paddle-wrapper" class="asnp-paddle-wrapper">
-			<div id="asnp-paddle"></div>
-		</div>
+		<div id="asnp-paddle" class="wrap"></div>
 		<?php
 	}
 

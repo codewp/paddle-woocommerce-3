@@ -17,12 +17,17 @@ export default function Subscriptions() {
 	const [ subscriptions, setSubscriptions ] = useState( [] );
 	const [ pages, setPages ] = useState( 1 );
 	const [ page, setPage ] = useState( 1 );
+	const [ search, setSearch ] = useState( '' );
 	const [ loading, setLoading ] = useState( true );
 
-	useEffect( async () => {
+	useEffect( () => {
+		getItems( { page } );
+	}, [ page ] );
+
+	const getItems = async ( args ) => {
 		try {
 			setLoading( true );
-			let response = await getSubscriptions( { page } );
+			let response = await getSubscriptions( args );
 			setSubscriptions(
 				response.items && response.items.length ? response.items : []
 			);
@@ -31,7 +36,12 @@ export default function Subscriptions() {
 			console.error( error );
 		}
 		setLoading( false );
-	}, [ page ] );
+	};
+
+	const searchItems = () => {
+		setPage( 1 );
+		getItems( { page, search } );
+	};
 
 	const next = ( e ) => {
 		e.preventDefault();
@@ -47,6 +57,24 @@ export default function Subscriptions() {
 
 	return (
 		<>
+			<p className="asnp-search-box">
+				<label className="screen-reader-text" for="user-search-input">
+					{ __( 'Search Subscriptions:', 'paddle' ) }
+				</label>
+				<input
+					type="search"
+					id="subscription-search-input"
+					name="search"
+					onChange={ ( e ) => setSearch( e.target.value ) }
+				/>
+				<input
+					type="submit"
+					id="search-submit"
+					class="button"
+					value={ __( 'Search', 'paddle' ) }
+					onClick={ searchItems }
+				/>
+			</p>
 			{ 0 < subscriptions.length && (
 				<table
 					className={ `wp-list-table widefat fixed striped table-view-list posts${ blur }` }
@@ -168,18 +196,7 @@ export default function Subscriptions() {
 			) }
 			{ ! loading && 0 >= subscriptions.length && (
 				<div className="woocommerce-message woocommerce-message--info woocommerce-Message woocommerce-Message--info woocommerce-info">
-					<a
-						className="woocommerce-Button button"
-						href={
-							paddleSubscriptionsData &&
-							paddleSubscriptionsData.shopUrl
-								? paddleSubscriptionsData.shopUrl
-								: '#'
-						}
-					>
-						{ __( 'Browse products', 'paddle' ) }
-					</a>
-					{ __( 'No order has been made yet.', 'paddle' ) }
+					{ __( 'There is not any subscriptions.', 'paddle' ) }
 				</div>
 			) }
 			<div

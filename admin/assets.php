@@ -16,7 +16,7 @@ class Paddle_WC_Admin_Assets {
 
             wp_enqueue_style(
                 'asnp-paddle-admin',
-                $this->get_url( 'admin/style', 'css' )
+                $this->get_url( 'admin/admin/style', 'css' )
             );
             wp_enqueue_script(
                 'asnp-paddle-admin',

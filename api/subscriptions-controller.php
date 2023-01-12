@@ -55,6 +55,7 @@ class Paddle_Subscriptions_Controller extends Paddle_Base_Controller {
 				'paginate' => true,
 				'number'   => 20,
 				'orderby'  => 'order_id',
+				'search'   => ! empty( $request['search'] ) ? sanitize_text_field( $request['search'] ) : '',
 			) );
 
 			$data = array(

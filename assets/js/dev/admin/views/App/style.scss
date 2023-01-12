@@ -1,4 +1,4 @@
-#paddle-subscriptions {
+#asnp-paddle {
 	position: relative;
 	.asnp-paddle-blur {
 		filter: blur( 2px );
@@ -11,5 +11,16 @@
 		top: 50%;
 		left: 50%;
 		transform: translate( -50%, -50% );
+	}
+	.asnp-paddle-status-active {
+		color: green;
+	}
+	.asnp-paddle-status-deleted,
+	.asnp-paddle-status-closed,
+	.asnp-paddle-status-canceled {
+		color: red;
+	}
+	.asnp-search-box {
+		float: right;
 	}
 }

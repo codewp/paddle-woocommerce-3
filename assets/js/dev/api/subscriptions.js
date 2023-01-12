@@ -8,6 +8,10 @@ export const getSubscriptions = async ( args = {} ) => {
 		query += '?page=' + args.page * 1;
 	}
 
+	if ( null != args.search ) {
+		query += ( query.length ? '&' : '?' ) + 'search=' + args.search;
+	}
+
 	try {
 		const response = await apiFetch( {
 			path: `${ API_ROOT }/subscriptions${ query }`,
