@@ -57,49 +57,68 @@ export default function Subscriptions() {
 
 	return (
 		<>
-			<p className="asnp-search-box">
-				<label className="screen-reader-text" for="user-search-input">
-					{ __( 'Search Subscriptions:', 'paddle' ) }
-				</label>
-				<input
-					type="search"
-					id="subscription-search-input"
-					name="search"
-					onChange={ ( e ) => setSearch( e.target.value ) }
-				/>
-				<input
-					type="submit"
-					id="search-submit"
-					class="button"
-					value={ __( 'Search', 'paddle' ) }
-					onClick={ searchItems }
-				/>
-			</p>
-			{ 0 < subscriptions.length && (
-				<table
-					className={ `wp-list-table widefat fixed striped table-view-list posts${ blur }` }
-				>
-					<thead>
-						<tr>
-							{ columns.map( ( { key, value } ) => (
-								<th
-									className={ `manage-column column-${ key }` }
-									key={ key }
-								>
-									{ value }
-								</th>
-							) ) }
-						</tr>
-					</thead>
+			<div className={ `asnp-subscriptions${ blur }` }>
+				<p className="asnp-search-box">
+					<label
+						className="screen-reader-text"
+						for="user-search-input"
+					>
+						{ __( 'Search Subscriptions:', 'paddle' ) }
+					</label>
+					<input
+						type="search"
+						id="subscription-search-input"
+						name="search"
+						onChange={ ( e ) => setSearch( e.target.value ) }
+					/>
+					<input
+						type="submit"
+						id="search-submit"
+						class="button"
+						value={ __( 'Search', 'paddle' ) }
+						onClick={ searchItems }
+					/>
+				</p>
+				{ 0 < subscriptions.length && (
+					<table className="wp-list-table widefat fixed striped table-view-list posts">
+						<thead>
+							<tr>
+								{ columns.map( ( { key, value } ) => (
+									<th
+										className={ `manage-column column-${ key }` }
+										key={ key }
+									>
+										{ value }
+									</th>
+								) ) }
+							</tr>
+						</thead>
 
-					<tbody>
-						{ subscriptions.map( ( subscription ) => (
-							<tr
-								className={ `iedit author-self level-0 type-paddle-subscriptions hentry status-${ subscription.status }` }
-								key={ subscription.order_id }
-							>
-								{ columns.map( ( { key, value } ) => {
-									if ( 'total' === key ) {
+						<tbody>
+							{ subscriptions.map( ( subscription ) => (
+								<tr
+									className={ `iedit author-self level-0 type-paddle-subscriptions hentry status-${ subscription.status }` }
+									key={ subscription.order_id }
+								>
+									{ columns.map( ( { key, value } ) => {
+										if ( 'total' === key ) {
+											return (
+												<td
+													className={ `column-${ key }` }
+													data-title={ value }
+													key={
+														subscription.order_id +
+														'_' +
+														key
+													}
+													dangerouslySetInnerHTML={ {
+														__html:
+															subscription[ key ],
+													} }
+												></td>
+											);
+										}
+
 										return (
 											<td
 												className={ `column-${ key }` }
@@ -109,96 +128,91 @@ export default function Subscriptions() {
 													'_' +
 													key
 												}
-												dangerouslySetInnerHTML={ {
-													__html: subscription[ key ],
-												} }
-											></td>
+											>
+												{ 'order-number' === key && (
+													<a
+														href={
+															subscription.order_url
+																? subscription.order_url
+																: '#'
+														}
+														target="_blank"
+													>
+														#
+														{ subscription.order_id +
+															( subscription.user_name
+																? ' ' +
+																  subscription.user_name
+																: '' ) }
+													</a>
+												) }
+												{ ( 'date' === key ||
+													'next_bill_date' ===
+														key ) && (
+													<time
+														dateTime={
+															subscription[
+																key + '_time'
+															]
+														}
+													>
+														{ subscription[ key ] }
+													</time>
+												) }
+												{ 'actions' === key && (
+													<a
+														href={
+															subscription.cancel_url
+																? subscription.cancel_url
+																: '#'
+														}
+														className="woocommerce-button button"
+														target="_blank"
+													>
+														{ __(
+															'Cancel',
+															'paddle'
+														) }
+													</a>
+												) }
+												{ -1 ===
+													[
+														'order-number',
+														'date',
+														'next_bill_date',
+														'actions',
+													].indexOf( key ) &&
+													null !=
+														subscription[ key ] &&
+													subscription[ key ] }
+											</td>
 										);
-									}
-
-									return (
-										<td
-											className={ `column-${ key }` }
-											data-title={ value }
-											key={
-												subscription.order_id +
-												'_' +
-												key
-											}
-										>
-											{ 'order-number' === key && (
-												<a
-													href={
-														subscription.order_url
-															? subscription.order_url
-															: '#'
-													}
-													target="_blank"
-												>
-													#
-													{ subscription.order_id +
-														( subscription.user_name
-															? ' ' +
-															  subscription.user_name
-															: '' ) }
-												</a>
-											) }
-											{ ( 'date' === key ||
-												'next_bill_date' === key ) && (
-												<time
-													dateTime={
-														subscription[
-															key + '_time'
-														]
-													}
-												>
-													{ subscription[ key ] }
-												</time>
-											) }
-											{ 'actions' === key && (
-												<a
-													href={
-														subscription.cancel_url
-															? subscription.cancel_url
-															: '#'
-													}
-													className="woocommerce-button button"
-													target="_blank"
-												>
-													{ __( 'Cancel', 'paddle' ) }
-												</a>
-											) }
-											{ -1 ===
-												[
-													'order-number',
-													'date',
-													'next_bill_date',
-													'actions',
-												].indexOf( key ) &&
-												null != subscription[ key ] &&
-												subscription[ key ] }
-										</td>
-									);
-								} ) }
-							</tr>
-						) ) }
-					</tbody>
-				</table>
-			) }
-			{ 0 < subscriptions.length && (
-				<Pagination
-					pages={ pages }
-					page={ page }
-					next={ next }
-					previous={ previous }
-					disabled={ loading }
-				/>
-			) }
-			{ ! loading && 0 >= subscriptions.length && (
-				<div className="woocommerce-message woocommerce-message--info woocommerce-Message woocommerce-Message--info woocommerce-info">
-					{ __( 'There is not any subscriptions.', 'paddle' ) }
-				</div>
-			) }
+									} ) }
+								</tr>
+							) ) }
+						</tbody>
+					</table>
+				) }
+				{ 0 < subscriptions.length && (
+					<Pagination
+						pages={ pages }
+						page={ page }
+						next={ next }
+						previous={ previous }
+						disabled={ loading }
+					/>
+				) }
+				{ 0 >= subscriptions.length && (
+					<div className="asnp-message update-nag notice notice-info">
+						{ loading
+							? __( 'Loading subscriptions...', 'paddle' )
+							: __(
+									'There is not any subscriptions.',
+									'paddle'
+							  ) }
+					</div>
+				) }
+			</div>
 			<div
 				className="asnp-paddle-loading"
 				style={ { display: loading ? 'block' : 'none' } }

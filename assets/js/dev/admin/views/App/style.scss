@@ -23,4 +23,14 @@
 	.asnp-search-box {
 		float: right;
 	}
+	.asnp-message {
+		clear: both;
+		display: block;
+		width: 50%;
+	}
+}
+
+.update-nage,
+.notice {
+	display: none;
 }
