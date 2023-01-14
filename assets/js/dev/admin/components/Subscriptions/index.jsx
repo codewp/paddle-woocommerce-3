@@ -43,6 +43,43 @@ export default function Subscriptions() {
 		getItems( { page, search } );
 	};
 
+	const getStatusText = ( status ) => {
+		switch ( status.toLowerCase() ) {
+			case 'active':
+				return __( 'Active', 'paddle' );
+
+			case 'cancelled':
+			case 'deleted':
+				return 'Cancelled', 'paddle';
+
+			case 'paused':
+				return __( 'Paused', 'paddle' );
+
+			case 'trialing':
+				return __( 'Trialing', 'paddle' );
+
+			case 'past_due':
+				return __( 'Past Due', 'paddle' );
+		}
+
+		return status;
+	};
+
+	const getDateText = ( subscription, key ) => {
+		if ( 'next_bill_date' !== key ) {
+			return subscription[ key ];
+		}
+
+		if (
+			'deleted' === subscription[ 'status' ] ||
+			'cancelled' === subscription[ 'status' ]
+		) {
+			return __( 'N/A', 'paddle' );
+		}
+
+		return subscription[ key ];
+	};
+
 	const next = ( e ) => {
 		e.preventDefault();
 		setPage( page + 1 );
@@ -121,7 +158,12 @@ export default function Subscriptions() {
 
 										return (
 											<td
-												className={ `column-${ key }` }
+												className={
+													`column-${ key }` +
+													( 'status' === key
+														? ` asnp-paddle-status-${ subscription[ key ] }`
+														: '' )
+												}
 												data-title={ value }
 												key={
 													subscription.order_id +
@@ -156,31 +198,57 @@ export default function Subscriptions() {
 															]
 														}
 													>
-														{ subscription[ key ] }
+														{ getDateText(
+															subscription,
+															key
+														) }
 													</time>
 												) }
 												{ 'actions' === key && (
-													<a
-														href={
-															subscription.cancel_url
-																? subscription.cancel_url
-																: '#'
-														}
-														className="woocommerce-button button"
-														target="_blank"
-													>
-														{ __(
-															'Cancel',
-															'paddle'
-														) }
-													</a>
+													<>
+														<a
+															href={
+																null !=
+																subscription.cancel_url
+																	? subscription.cancel_url
+																	: '#'
+															}
+															className="woocommerce-button button"
+															target="_blank"
+														>
+															{ __(
+																'Cancel',
+																'paddle'
+															) }
+														</a>
+														<a
+															href={
+																null !=
+																subscription.update_url
+																	? subscription.update_url
+																	: '#'
+															}
+															className="woocommerce-button button"
+															target="_blank"
+														>
+															{ __(
+																'Update',
+																'paddle'
+															) }
+														</a>
+													</>
 												) }
+												{ 'status' === key &&
+													getStatusText(
+														subscription[ key ]
+													) }
 												{ -1 ===
 													[
 														'order-number',
 														'date',
 														'next_bill_date',
 														'actions',
+														'status',
 													].indexOf( key ) &&
 													null !=
 														subscription[ key ] &&

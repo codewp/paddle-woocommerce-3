@@ -128,6 +128,7 @@ class Paddle_Subscriptions_Controller extends Paddle_Base_Controller {
 			'next_bill_date'      => ! empty( $item->next_bill_date ) ? wc_format_datetime( wc_string_to_datetime( $item->next_bill_date ) ) : '',
 			'next_bill_date_time' => ! empty( $item->next_bill_date ) ? wc_string_to_datetime( $item->next_bill_date )->date( 'c' ) : '',
 			'cancel_url'          => ! empty( $item->cancel_url ) ? esc_url( $item->cancel_url ) : '',
+			'update_url'          => ! empty( $item->update_url ) ? esc_url( $item->update_url ) : '',
 			'status'              => ! empty( $item->status ) ? sanitize_text_field( $item->status ) : '',
 			'user_name'           => ! empty( $item->display_name ) ? sanitize_text_field( $item->display_name ) : '',
 			'user_email'          => ! empty( $item->user_email ) ? sanitize_email( $item->user_email ) : '',
@@ -153,6 +154,7 @@ class Paddle_Subscriptions_Controller extends Paddle_Base_Controller {
 			'next_bill_date'      => ! empty( $item->next_bill_date ) ? wc_format_datetime( wc_string_to_datetime( $item->next_bill_date ) ) : '',
 			'next_bill_date_time' => ! empty( $item->next_bill_date ) ? wc_string_to_datetime( $item->next_bill_date )->date( 'c' ) : '',
 			'cancel_url'          => ! empty( $item->cancel_url ) ? esc_url( $item->cancel_url ) : '',
+			'update_url'          => ! empty( $item->update_url ) ? esc_url( $item->update_url ) : '',
 			'status'              => ! empty( $item->status ) ? sanitize_text_field( $item->status ) : '',
 		);
 	}

@@ -13,11 +13,14 @@
 		transform: translate( -50%, -50% );
 	}
 	.asnp-paddle-status-active {
-		color: green;
+		color: #47b545;
 	}
 	.asnp-paddle-status-deleted,
 	.asnp-paddle-status-closed,
-	.asnp-paddle-status-canceled {
-		color: red;
+	.asnp-paddle-status-cancelled {
+		color: #ea047e;
+	}
+	td.woocommerce-orders-table__cell .button {
+		margin-right: 5px;
 	}
 }
