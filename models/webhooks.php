@@ -54,6 +54,7 @@ class Paddle_WC_Webhooks {
             return;
         }
 
+		$order->payment_complete();
         $order->add_meta_data( '_paddle_order_id', $paddle_order_id, true );
         $order->add_order_note( 'Paddle Order ID: ' . $paddle_order_id );
 

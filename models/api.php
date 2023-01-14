@@ -74,8 +74,6 @@ class Paddle_WC_API {
 		if ( ! empty( $subscription_plan_id ) && 0 < absint( $subscription_plan_id ) ) {
 			$data['product_id'] = absint( $subscription_plan_id );
 			$data['recurring_prices'] = $data['prices'];
-		} else {
-			$data['webhook_url'] = static::get_webhook_url($order->get_id());
 		}
 
 		// Get pay link from Paddle API
