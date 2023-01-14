@@ -50,7 +50,7 @@ export default function Subscriptions() {
 
 			case 'cancelled':
 			case 'deleted':
-				return 'Cancelled', 'paddle';
+				return __( 'Cancelled', 'paddle' );
 
 			case 'paused':
 				return __( 'Paused', 'paddle' );
@@ -206,36 +206,49 @@ export default function Subscriptions() {
 												) }
 												{ 'actions' === key && (
 													<>
-														<a
-															href={
-																null !=
-																subscription.cancel_url
-																	? subscription.cancel_url
-																	: '#'
-															}
-															className="woocommerce-button button"
-															target="_blank"
-														>
-															{ __(
-																'Cancel',
-																'paddle'
+														{ null !=
+															subscription.cancel_url &&
+															( null ==
+																subscription.status ||
+																'deleted' !==
+																	subscription.status ) && (
+																<a
+																	href={
+																		subscription.cancel_url
+																			? subscription.cancel_url
+																			: '#'
+																	}
+																	className="woocommerce-button button"
+																	target="_blank"
+																>
+																	{ __(
+																		'Cancel',
+																		'paddle'
+																	) }
+																</a>
 															) }
-														</a>
-														<a
-															href={
-																null !=
-																subscription.update_url
-																	? subscription.update_url
-																	: '#'
-															}
-															className="woocommerce-button button"
-															target="_blank"
-														>
-															{ __(
-																'Update',
-																'paddle'
+														{ null !=
+															subscription.update_url &&
+															null !=
+																subscription.status &&
+															'deleted' !==
+																subscription.status && (
+																<a
+																	href={
+																		null !=
+																		subscription.update_url
+																			? subscription.update_url
+																			: '#'
+																	}
+																	className="woocommerce-button button"
+																	target="_blank"
+																>
+																	{ __(
+																		'Update',
+																		'paddle'
+																	) }
+																</a>
 															) }
-														</a>
 													</>
 												) }
 												{ 'status' === key &&
