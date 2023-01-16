@@ -182,14 +182,16 @@ class Paddle_WC_Webhooks {
         }
 
 		try {
-			$order->payment_complete();
 			$id = $this->add_subscription( $subscription_id, $_POST, $order );
+			if ( 'completed' !== $order->get_status() ) {
+				// Order complete generate new licenses and should not renew licenses.
+				$order->payment_complete();
+			} else {
+				paddle_wc_renew_order_downloadable_files( $order );
+				do_action( 'paddle_wc_subscription_renewed', $order, $id, $subscription_id );
+			}
 			$order->add_meta_data( '_paddle_order_id', $paddle_order_id, true );
 			$order->add_order_note( 'Paddle Order ID: ' . $paddle_order_id );
-			paddle_wc_renew_order_downloadable_files( $order );
-			if ( 0 < $id ) {
-				do_action( 'paddle_wc_subscription_payment_succeeded', $id, $subscription_id, $_POST );
-			}
 		} catch ( Exception $e ) {
 			if ( paddle_wc()->log_enabled ) {
                 paddle_wc()->log->error( $e->getMessage(), array( 'source' => 'paddle' ) );
