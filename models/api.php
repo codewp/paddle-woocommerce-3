@@ -57,23 +57,39 @@ class Paddle_WC_API {
 			$data['vat_postcode'] = $vat_postcode;
 		}
 
+		$items = $order->get_items();
+		$one_off_purchases = array();
+		$one_off_total = 0;
+		foreach ( $items as $item ) {
+			$product = $item->get_product();
+			if ( $product->get_meta( '_paddle_one_off_purchase', true ) ) {
+				$one_off_purchases[] = $item;
+				$one_off_total += $item->get_total();
+			}
+		}
+
 		// Add the product name(s) as custom message
-		if($settings->get('send_names') == 'yes') {
-			$passthrough['products'] = array();
-			$items = $order->get_items();
+		if( $settings->get( 'send_names' ) == 'yes' ) {
 			$names = array();
-			foreach($items as $item) {
+			foreach ( $items as $item ) {
 				$names[] = $item['name'];
 			}
-			$data['custom_message'] = implode(', ', array_unique($names));
-			$data['title'] = implode(', ', array_unique($names));
+			$data['title'] = $data['custom_message'] = implode( ', ', array_unique( $names ) );
 		}
 
 		// Add subscription paln if exist.
 		$subscription_plan_id = $settings->get( 'subscription_plan_id', '' );
-		if ( ! empty( $subscription_plan_id ) && 0 < absint( $subscription_plan_id ) ) {
-			$data['product_id'] = absint( $subscription_plan_id );
-			$data['recurring_prices'] = $data['prices'];
+		if ( count( $items ) > count( $one_off_purchases ) && ! empty( $subscription_plan_id ) && 0 < absint( $subscription_plan_id ) ) {
+			if ( empty( $one_off_total ) ) {
+				$data['product_id'] = absint( $subscription_plan_id );
+				$data['recurring_prices'] = $data['prices'];
+			} else {
+				$recurring_prices = $order_total - $one_off_total;
+				if ( 0 < $recurring_prices ) {
+					$data['product_id'] = absint( $subscription_plan_id );
+					$data['recurring_prices'] = array( get_woocommerce_currency() . ':' . $recurring_prices );
+				}
+			}
 		}
 
 		// Get pay link from Paddle API
