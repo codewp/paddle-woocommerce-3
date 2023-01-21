@@ -38,6 +38,8 @@ class Paddle_DB_Subscriptions extends Paddle_DB {
             'cancel_url'           => '%s',
             'update_url'           => '%s',
             'next_bill_date'       => '%s',
+			'next_payment_amount'  => '%s',
+			'payment_method'       => '%s',
             'currency'             => '%s',
             'unit_price'           => '%s',
 		);

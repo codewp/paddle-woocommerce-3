@@ -9,7 +9,10 @@ const columns = [
 	{ key: 'date', value: __( 'Date', 'paddle' ) },
 	{ key: 'next_bill_date', value: __( 'Next Date', 'paddle' ) },
 	{ key: 'status', value: __( 'Status', 'paddle' ) },
-	{ key: 'total', value: __( 'Total', 'paddle' ) },
+	{
+		key: 'next_payment_amount',
+		value: __( 'Next Payment Amount', 'paddle' ),
+	},
 	{ key: 'actions', value: __( 'Actions', 'paddle' ) },
 ];
 
@@ -138,7 +141,7 @@ export default function Subscriptions() {
 									key={ subscription.order_id }
 								>
 									{ columns.map( ( { key, value } ) => {
-										if ( 'total' === key ) {
+										if ( 'next_payment_amount' === key ) {
 											return (
 												<td
 													className={ `column-${ key }` }

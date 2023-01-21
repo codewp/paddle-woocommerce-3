@@ -3,7 +3,7 @@
  * Plugin Name: Paddle
  * Plugin URI: https://github.com/hasinhayder/paddle-woocommerce-3
  * Description: Paddle Payment Gateway for WooCommerce
- * Version: 4.0.0
+ * Version: 4.2.0
  * Author: Paddle.com (Improvements by ThemeBucket)
  * Author URI: https://github.com/hasinhayder
  */
@@ -20,7 +20,7 @@ if (!class_exists('Paddle_WC')) :
  */
 final class Paddle_WC {
 
-	public $version = '4.1.0';
+	public $version = '4.2.0';
 
 	/**
 	 * Instance of our settings object.

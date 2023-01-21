@@ -100,3 +100,70 @@ function paddle_wc_renew_order_downloadable_files( $order ) {
 		$download->save();
 	}
 }
+
+function paddle_wc_renew_order( $order, $subscription_id = null, $paddle_subscription_id = null ) {
+	$order = is_numeric( $order ) ? wc_get_order( $order ) : $order;
+	if ( ! $order || ! $order instanceof WC_Order ) {
+		throw new Exception( 'Order not found.' );
+	}
+
+	$transient = get_transient( '_paddle_renewed_order_' . $order->get_id() );
+	if ( $transient ) {
+		return;
+	}
+	set_transient( '_paddle_renewed_order_' . $order->get_id(), true, HOUR_IN_SECONDS );
+
+	$new_order = wc_create_order(
+		array(
+			'customer_id' => $order->get_customer_id(),
+			'parent'      => $order->get_id(),
+		)
+	);
+
+	$new_order->update_meta_data( '_renewed_order', $order->get_id(), true );
+	if ( ! empty( $subscription_id ) ) {
+		$new_order->update_meta_data( '_subscription_id', $subscription_id, true );
+	}
+	if ( ! empty( $paddle_subscription_id ) ) {
+		$new_order->update_meta_data( '_paddle_subscription_id', $paddle_subscription_id, true );
+	}
+	$new_order->set_currency( $order->get_currency() );
+	$new_order->set_billing_first_name( $order->get_billing_first_name() );
+	$new_order->set_billing_last_name( $order->get_billing_last_name() );
+	$new_order->set_billing_company( $order->get_billing_company() );
+	$new_order->set_billing_address_1( $order->get_billing_address_1() );
+	$new_order->set_billing_address_2( $order->get_billing_address_2() );
+	$new_order->set_billing_city( $order->get_billing_city() );
+	$new_order->set_billing_state( $order->get_billing_state() );
+	$new_order->set_billing_postcode( $order->get_billing_postcode() );
+	$new_order->set_billing_country( $order->get_billing_country() );
+	$new_order->set_billing_email( $order->get_billing_email() );
+	$new_order->set_billing_phone( $order->get_billing_phone() );
+
+	// Set new order items.
+	foreach ( $order->get_items() as $item ) {
+		// Ignore one-off purchase products.
+		$product = $item->get_product();
+		if ( ! $product || $product->get_meta( '_paddle_one_off_purchase', true ) ) {
+			continue;
+		}
+
+		$new_order->add_product(
+			$product,
+			$item->get_quantity(),
+			array(
+				'total'    => $item->get_total(),
+				'subtotal' => $item->get_subtotal(),
+			)
+		);
+	}
+
+	$new_order->calculate_totals();
+	$new_order->save();
+
+	do_action( 'paddle_wc_order_renewed', $new_order, $order, $subscription_id, $paddle_subscription_id );
+
+	$new_order->payment_complete();
+
+	return $new_order;
+}
