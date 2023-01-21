@@ -225,12 +225,29 @@ class Paddle_WC_Checkout {
 		$vat_street = ! empty( $_POST['vat_street'] ) ? sanitize_text_field( trim( $_POST['vat_street'] ) ) : '';
 		$vat_postcode = ! empty( $_POST['vat_postcode'] ) ? sanitize_text_field( trim( $_POST['vat_postcode'] ) ) : '';
 
-        $order->add_meta_data( 'vat_number', $vat_number, true );
-		$order->add_meta_data( 'vat_company_name', $vat_company_name, true );
-		$order->add_meta_data( 'vat_country', $vat_country, true );
-		$order->add_meta_data( 'vat_city', $vat_city, true );
-		$order->add_meta_data( 'vat_street', $vat_street, true );
-		$order->add_meta_data( 'vat_postcode', $vat_postcode, true );
+		if ( ! empty( $vat_number ) ) {
+			$order->add_meta_data( 'vat_number', $vat_number, true );
+		}
+
+		if ( ! empty( $vat_company_name ) ) {
+			$order->add_meta_data( 'vat_company_name', $vat_company_name, true );
+		}
+
+		if ( ! empty( $vat_country ) ) {
+			$order->add_meta_data( 'vat_country', $vat_country, true );
+		}
+
+		if ( ! empty( $vat_city ) ) {
+			$order->add_meta_data( 'vat_city', $vat_city, true );
+		}
+
+		if ( ! empty( $vat_street ) ) {
+			$order->add_meta_data( 'vat_street', $vat_street, true );
+		}
+
+		if ( ! empty( $vat_postcode ) ) {
+			$order->add_meta_data( 'vat_postcode', $vat_postcode, true );
+		}
 	}
 
 	public function display_vat_checkout_fields( $order ) {

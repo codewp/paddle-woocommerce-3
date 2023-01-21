@@ -140,6 +140,38 @@ function paddle_wc_renew_order( $order, $subscription_id = null, $paddle_subscri
 	$new_order->set_billing_email( $order->get_billing_email() );
 	$new_order->set_billing_phone( $order->get_billing_phone() );
 
+	// VAT info.
+	$vat_number = $order->get_meta( 'vat_number' );
+	$vat_company_name = $order->get_meta( 'vat_company_name' );
+	$vat_country = $order->get_meta( 'vat_country' );
+	$vat_city = $order->get_meta( 'vat_city' );
+	$vat_street = $order->get_meta( 'vat_street' );
+	$vat_postcode = $order->get_meta( 'vat_postcode' );
+
+	if ( ! empty( $vat_number ) ) {
+		$new_order->add_meta_data( 'vat_number', $vat_number, true );
+	}
+
+	if ( ! empty( $vat_company_name ) ) {
+		$new_order->add_meta_data( 'vat_company_name', $vat_company_name, true );
+	}
+
+	if ( ! empty( $vat_country ) ) {
+		$new_order->add_meta_data( 'vat_country', $vat_country, true );
+	}
+
+	if ( ! empty( $vat_city ) ) {
+		$new_order->add_meta_data( 'vat_city', $vat_city, true );
+	}
+
+	if ( ! empty( $vat_street ) ) {
+		$new_order->add_meta_data( 'vat_street', $vat_street, true );
+	}
+
+	if ( ! empty( $vat_postcode ) ) {
+		$new_order->add_meta_data( 'vat_postcode', $vat_postcode, true );
+	}
+
 	// Set new order items.
 	foreach ( $order->get_items() as $item ) {
 		// Ignore one-off purchase products.
