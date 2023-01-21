@@ -51,6 +51,9 @@ class Paddle_WC_Checkout {
 		add_action( 'woocommerce_checkout_process', array( $this, 'process_vat_checkout_fields' ) );
 		add_action( 'woocommerce_checkout_create_order', array( $this, 'save_vat_checkout_fields' ) );
 		add_action( 'woocommerce_admin_order_data_after_billing_address', array( $this, 'display_vat_checkout_fields' ) );
+
+		// Order thank you message.
+		add_filter( 'woocommerce_thankyou_order_received_text', array( $this, 'thankyou_order_received_text' ), 99, 2 );
 	}
 
 	/**
@@ -257,6 +260,28 @@ class Paddle_WC_Checkout {
 		echo '<p><strong>' . __( 'VAT city', 'paddle' ) . ':</strong> ' . esc_html( $order->get_meta( 'vat_city' ) ) . '</p>';
 		echo '<p><strong>' . __( 'VAT street', 'paddle' ) . ':</strong> ' . esc_html( $order->get_meta( 'vat_street' ) ) . '</p>';
 		echo '<p><strong>' . __( 'VAT postcode', 'paddle' ) . ':</strong> ' . esc_html( $order->get_meta( 'vat_postcode' ) ) . '</p>';
+	}
+
+	public function thankyou_order_received_text( $message, $order ) {
+		if ( ! $order ) {
+			return $message;
+		}
+
+		$items = $order->get_items();
+		if ( empty( $items ) ) {
+			return $message;
+		}
+
+		foreach ( $items as $item ) {
+			$product = $item->get_product();
+			if ( ! $product->get_meta( '_paddle_one_off_purchase', true ) ) {
+				return esc_html__( 'Thank you. Your order has been received and you are subscribed.', 'paddle' ) .
+				'<br/>' .
+				sprintf( __( 'You can cancel your subscription at any time from %s.', 'paddle' ), '<a href="' . esc_url( wc_get_account_endpoint_url( 'paddle-subscriptions' ) ) . '" target="_blank"><strong>' . __( 'your account', 'paddle' ) . '</strong></a>' );
+			}
+		}
+
+		return $message;
 	}
 
 }
