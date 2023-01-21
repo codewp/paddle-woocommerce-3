@@ -50,6 +50,12 @@ final class Paddle_WC {
 	 */
 	private static $_instance = null;
 
+	protected $api;
+
+	protected $menu;
+
+	protected $assets;
+
 	/**
 	 * The webhooks that handles Paddle webhook requests.
 	 *
@@ -67,6 +73,8 @@ final class Paddle_WC {
 	public $log_enabled = true;
 
 	public $subscriptions;
+
+	public $admin;
 
 	/**
 	 * Main Paddle_WC Instance.
@@ -123,6 +131,7 @@ final class Paddle_WC {
 			include_once dirname( __FILE__ ) . '/models/settings.php';
 			include_once dirname( __FILE__ ) . '/models/webhooks.php';
 			include_once dirname( __FILE__ ) . '/models/assets.php';
+			include_once dirname( __FILE__ ) . '/models/emails.php';
 			include_once dirname( __FILE__ ) . '/api/rest-api.php';
 			include_once dirname( __FILE__ ) . '/api/base-controller.php';
 			include_once dirname( __FILE__ ) . '/api/subscriptions-controller.php';
@@ -154,6 +163,8 @@ final class Paddle_WC {
 
 			$this->webhooks = new Paddle_WC_Webhooks();
 			$this->webhooks->init();
+
+			Paddle_WC_Emails::init();
 
 			$this->assets = new Paddle_WC_Assets();
 			$this->assets->init();
