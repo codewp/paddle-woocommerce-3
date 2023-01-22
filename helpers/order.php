@@ -199,3 +199,36 @@ function paddle_wc_renew_order( $order, $subscription_id = null, $paddle_subscri
 
 	return $new_order;
 }
+
+function paddle_wc_get_order_subscription_items( $order ) {
+	$order = is_numeric( $order ) ? wc_get_order( $order ) : $order;
+	if ( ! $order || ! $order instanceof WC_Order ) {
+		throw new Exception( 'Order not found.' );
+	}
+
+	$subscriptions = array();
+	foreach ( $order->get_items() as $item ) {
+		$product = $item->get_product();
+		if ( $product && ! $product->get_meta( '_paddle_one_off_purchase', true ) ) {
+			$subscriptions[] = $item;
+		}
+	}
+
+	return $subscriptions;
+}
+
+function paddle_wc_has_order_subscription_items( $order ) {
+	$order = is_numeric( $order ) ? wc_get_order( $order ) : $order;
+	if ( ! $order || ! $order instanceof WC_Order ) {
+		throw new Exception( 'Order not found.' );
+	}
+
+	foreach ( $order->get_items() as $item ) {
+		$product = $item->get_product();
+		if ( $product && ! $product->get_meta( '_paddle_one_off_purchase', true ) ) {
+			return true;
+		}
+	}
+
+	return false;
+}

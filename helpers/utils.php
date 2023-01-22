@@ -57,3 +57,12 @@ function paddle_register_polyfills() {
 		}
 	}
 }
+
+function paddle_wc_get_template( $template_name, $args ) {
+	return wc_get_template(
+		$template_name,
+		$args,
+		'',
+		plugin_dir_path( ASNP_PADDLE_WC_PLUGIN_FILE ) . 'templates/'
+	);
+}

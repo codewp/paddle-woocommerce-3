@@ -1,37 +1,54 @@
 <?php
-defined( 'ABSPATH' ) or exit;
+defined( 'ABSPATH' ) || exit;
 
 class Paddle_WC_Emails {
 
-	public static function init() {
-		add_action( 'woocommerce_email_order_details', array( __CLASS__, 'subscribed_message' ), 2, 4 );
+	public function init() {
+		add_action( 'woocommerce_email_order_details', array( __CLASS__, 'order_subscriptions' ), 2, 4 );
 	}
 
-	public static function subscribed_message( $order, $sent_to_admin = false, $plain_text = false, $email = '' ) {
+	public function order_subscriptions( $order, $sent_to_admin = false, $plain_text = false, $email = '' ) {
 		if (
-			$sent_to_admin ||
 			! $order->has_status( 'completed' ) ||
 			! is_a( $email, 'WC_Email_Customer_Completed_Order' )
 		) {
 			return;
 		}
 
-		$subscribed = false;
-		foreach ( $order->get_items() as $item ) {
-			$product = $item->get_product();
-			if ( $product && ! $product->get_meta( '_paddle_one_off_purchase', true ) ) {
-				$subscribed = true;
-				break;
-			}
+		$subscription = paddle_wc()->subscriptions->get_item_by( 'order_id', $order->get_id() );
+		if ( ! $subscription ) {
+			return;
 		}
-		if ( ! $subscribed ) {
+
+		$subscriptions = paddle_wc_get_order_subscription_items( $order );
+		if ( empty( $subscriptions ) ) {
 			return;
 		}
 
 		if ( $plain_text ) {
-			echo esc_html__( 'You are subscribed, and you can cancel your subscription at any time from your account.', 'paddle' );
+			paddle_wc_get_template(
+				'emails/plain/email-subscriptions.php',
+				array(
+					'order'         => $order,
+					'sent_to_admin' => $sent_to_admin,
+					'plain_text'    => $plain_text,
+					'email'         => $email,
+					'subscription'  => $subscription,
+					'subscriptions' => $subscriptions,
+				)
+			);
 		} else {
-			echo '<p>' . sprintf( __( 'You are subscribed, and you can cancel your subscription at any time from %s.', 'paddle' ), '<a href="' . esc_url( wc_get_account_endpoint_url( 'paddle-subscriptions' ) ) . '" target="_blank"><strong>' . __( 'your account', 'paddle' ) . '</strong></a>' ) . '</p>';
+			paddle_wc_get_template(
+				'emails/email-subscriptions.php',
+				array(
+					'order'         => $order,
+					'sent_to_admin' => $sent_to_admin,
+					'plain_text'    => $plain_text,
+					'email'         => $email,
+					'subscription'  => $subscription,
+					'subscriptions' => $subscriptions,
+				)
+			);
 		}
 	}
 

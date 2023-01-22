@@ -56,12 +56,16 @@ final class Paddle_WC {
 
 	protected $assets;
 
+	public $admin;
+
 	/**
 	 * The webhooks that handles Paddle webhook requests.
 	 *
 	 * @var Paddle_WC_Webhooks
 	 */
 	public $webhooks;
+
+	public $emails;
 
 	/**
 	 * Logger.
@@ -73,8 +77,6 @@ final class Paddle_WC {
 	public $log_enabled = true;
 
 	public $subscriptions;
-
-	public $admin;
 
 	/**
 	 * Main Paddle_WC Instance.
@@ -164,7 +166,8 @@ final class Paddle_WC {
 			$this->webhooks = new Paddle_WC_Webhooks();
 			$this->webhooks->init();
 
-			Paddle_WC_Emails::init();
+			$this->emails = new Paddle_WC_Emails();
+			$this->emails->init();
 
 			$this->assets = new Paddle_WC_Assets();
 			$this->assets->init();
