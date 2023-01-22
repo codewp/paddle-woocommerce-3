@@ -22,12 +22,14 @@ do_action( 'woocommerce_email_before_order_subscriptions', $order, $sent_to_admi
 		<thead>
 			<tr>
 				<th class="td" scope="col" style="text-align:<?php echo esc_attr( $text_align ); ?>;"><?php esc_html_e( 'Product', 'woocommerce' ); ?></th>
+				<th class="td" scope="col" style="text-align:<?php echo esc_attr( $text_align ); ?>;"><?php esc_html_e( 'Quantity', 'woocommerce' ); ?></th>
+				<th class="td" scope="col" style="text-align:<?php echo esc_attr( $text_align ); ?>;"><?php esc_html_e( 'Price', 'woocommerce' ); ?></th>
 			</tr>
 		</thead>
 		<tbody>
 			<?php foreach ( $subscriptions as $item ) : ?>
 				<tr>
-					<td class="td" style="text-align:<?php echo esc_attr( $text_align ); ?>;">
+					<td class="td" style="text-align:<?php echo esc_attr( $text_align ); ?>; vertical-align:middle; font-family: 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif;">
 						<?php
 						$product           = $item->get_product();
 						$is_visible        = $product && $product->is_visible();
@@ -35,6 +37,12 @@ do_action( 'woocommerce_email_before_order_subscriptions', $order, $sent_to_admi
 
 						echo wp_kses_post( apply_filters( 'woocommerce_order_item_name', $product_permalink ? sprintf( '<a href="%s">%s</a>', $product_permalink, $item->get_name() ) : $item->get_name(), $item, $is_visible ) );
 						?>
+					</td>
+					<td class="td" style="text-align:<?php echo esc_attr( $text_align ); ?>; vertical-align:middle; font-family: 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif;">
+						<?php echo esc_html( $item->get_quantity() ); ?>
+					</td>
+					<td class="td" style="text-align:<?php echo esc_attr( $text_align ); ?>; vertical-align:middle; font-family: 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif;">
+						<?php echo $order->get_formatted_line_subtotal( $item ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 					</td>
 				</tr>
 			<?php endforeach; ?>
@@ -44,7 +52,15 @@ do_action( 'woocommerce_email_before_order_subscriptions', $order, $sent_to_admi
 			if ( ! empty( $subscription->next_payment_amount ) ) : ?>
 				<tr>
 					<th class="td" scope="row" colspan="2" style="border-top-width: 4px; text-align:<?php echo esc_attr( $text_align ); ?>;"><?php echo esc_html__( 'Next Payment Amount', 'paddle' ); ?></th>
-					<td class="td" style="border-top-width: 4px; text-align:<?php echo esc_attr( $text_align ); ?>;"><?php echo wp_kses_post( wc_price( $subscription->next_payment_amount, array( 'currency' => $order->get_currency() ) ) ); ?></td>
+					<td class="td" style="border-top-width: 4px; text-align:<?php echo esc_attr( $text_align ); ?>;">
+						<?php
+						echo wp_kses_post( wc_price( $subscription->next_payment_amount, array( 'currency' => $order->get_currency() ) ) );
+						echo ' <small class="includes_tax">' . sprintf( __( '(includes %s)', 'woocommerce' ), WC()->countries->tax_or_vat() ) . '</small>';
+						if ( ! empty( $subscription->next_bill_date ) ) {
+							echo ' <small>' . esc_html( wc_format_datetime( wc_string_to_datetime( $subscription->next_bill_date ) ) ) . '</small>';
+						}
+						?>
+					</td>
 				</tr>
 			<?php endif; ?>
 		</tfoot>

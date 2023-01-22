@@ -15,6 +15,7 @@ defined( 'ABSPATH' ) || exit;
 	<thead>
 		<tr>
 			<th class="woocommerce-table__product-name product-name"><?php esc_html_e( 'Product', 'woocommerce' ); ?></th>
+			<th class="woocommerce-table__product-table product-total"><?php esc_html_e( 'Total', 'woocommerce' ); ?></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -27,7 +28,12 @@ defined( 'ABSPATH' ) || exit;
 					$product_permalink = apply_filters( 'woocommerce_order_item_permalink', $is_visible ? $product->get_permalink( $item ) : '', $item, $order );
 
 					echo wp_kses_post( apply_filters( 'woocommerce_order_item_name', $product_permalink ? sprintf( '<a href="%s">%s</a>', $product_permalink, $item->get_name() ) : $item->get_name(), $item, $is_visible ) );
+
+					echo apply_filters( 'woocommerce_order_item_quantity_html', ' <strong class="product-quantity">' . sprintf( '&times;&nbsp;%s', esc_html( $item->get_quantity() ) ) . '</strong>', $item ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 					?>
+				</td>
+				<td class="woocommerce-table__product-total product-total">
+					<?php echo $order->get_formatted_line_subtotal( $item ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</td>
 			</tr>
 		<?php endforeach; ?>
@@ -37,7 +43,15 @@ defined( 'ABSPATH' ) || exit;
 		if ( ! empty( $subscription->next_payment_amount ) ) : ?>
 			<tr>
 				<th scope="row"><?php echo esc_html__( 'Next Payment Amount', 'paddle' ); ?></th>
-				<td><?php echo wp_kses_post( wc_price( $subscription->next_payment_amount, array( 'currency' => $order->get_currency() ) ) ); ?></td>
+				<td>
+					<?php
+					echo wp_kses_post( wc_price( $subscription->next_payment_amount, array( 'currency' => $order->get_currency() ) ) );
+					echo ' <small class="includes_tax">' . sprintf( __( '(includes %s)', 'woocommerce' ), WC()->countries->tax_or_vat() ) . '</small>';
+					if ( ! empty( $subscription->next_bill_date ) ) {
+						echo ' <small>' . esc_html( wc_format_datetime( wc_string_to_datetime( $subscription->next_bill_date ) ) ) . '</small>';
+					}
+					?>
+				</td>
 			</tr>
 		<?php endif; ?>
 	</tfoot>

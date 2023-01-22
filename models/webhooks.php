@@ -103,6 +103,13 @@ class Paddle_WC_Webhooks {
         }
 
 		try {
+			$this->set_status_header( 200 );
+
+			$subscription = paddle_wc()->subscriptions->get_item_by( 'subscription_id', $subscription_id );
+			if ( ! $subscription || empty( $subscription->id ) ) {
+				return;
+			}
+
 			$id = $this->add_subscription( $subscription_id, $_POST );
 			if ( 0 < $id ) {
 				do_action( 'paddle_wc_subscription_created', $id, $subscription_id, $_POST );
@@ -112,8 +119,6 @@ class Paddle_WC_Webhooks {
                 paddle_wc()->log->error( $e->getMessage(), array( 'source' => 'paddle' ) );
             }
 		}
-
-        $this->set_status_header( 200 );
     }
 
     public function subscription_updated() {
@@ -127,6 +132,13 @@ class Paddle_WC_Webhooks {
         }
 
 		try {
+			$this->set_status_header( 200 );
+
+			$subscription = paddle_wc()->subscriptions->get_item_by( 'subscription_id', $subscription_id );
+			if ( ! $subscription || empty( $subscription->id ) ) {
+				return;
+			}
+
 			$id = $this->add_subscription( $subscription_id, $_POST );
 			if ( 0 < $id ) {
 				do_action( 'paddle_wc_subscription_updated', $id, $subscription_id, $_POST );
@@ -136,8 +148,6 @@ class Paddle_WC_Webhooks {
                 paddle_wc()->log->error( $e->getMessage(), array( 'source' => 'paddle' ) );
             }
 		}
-
-        $this->set_status_header( 200 );
     }
 
     public function subscription_cancelled() {
@@ -151,6 +161,13 @@ class Paddle_WC_Webhooks {
         }
 
 		try {
+			$this->set_status_header( 200 );
+
+			$subscription = paddle_wc()->subscriptions->get_item_by( 'subscription_id', $subscription_id );
+			if ( ! $subscription || empty( $subscription->id ) ) {
+				return;
+			}
+			
 			$id = $this->add_subscription( $subscription_id, $_POST );
 			if ( 0 < $id ) {
 				do_action( 'paddle_wc_subscription_cancelled', $id, $subscription_id, $_POST );
@@ -160,15 +177,12 @@ class Paddle_WC_Webhooks {
                 paddle_wc()->log->error( $e->getMessage(), array( 'source' => 'paddle' ) );
             }
 		}
-
-        $this->set_status_header( 200 );
     }
 
 	public function subscription_payment_succeeded() {
         $subscription_id = isset( $_POST['subscription_id'] ) ? sanitize_text_field( $_POST['subscription_id'] ) : '';
 		$paddle_order_id = isset( $_POST['order_id'] ) ? sanitize_text_field( $_POST['order_id'] ) : '';
         $passthrough     = ! empty( $_POST['passthrough'] ) ? sanitize_text_field( $_POST['passthrough'] ) : '';
-        $order           = ! empty( $passthrough ) ? paddle_wc_get_order_by_passthrough( $passthrough ) : false;
 
         if ( empty( $subscription_id ) ) {
             if ( paddle_wc()->log_enabled ) {
@@ -180,7 +194,6 @@ class Paddle_WC_Webhooks {
 
 		try {
 			$this->set_status_header( 200 );
-			$id = $this->add_subscription( $subscription_id, $_POST, $order );
 			// Is it the subscription initial payment.
 			if ( isset( $_POST['initial_payment'] ) && '1' === $_POST['initial_payment'] ) {
 				$order = ! empty( $passthrough ) ? paddle_wc_get_order_by_passthrough( $passthrough ) : false;
@@ -188,36 +201,39 @@ class Paddle_WC_Webhooks {
 					if ( paddle_wc()->log_enabled ) {
 						paddle_wc()->log->error( 'Paddle subscription payment succeeded: order not found for Paddle subscription #' . $subscription_id . ' and passthrough: ' . $passthrough, array( 'source' => 'paddle' ) );
 					}
+					return;
 				}
+				$id = $this->add_subscription( $subscription_id, $_POST, $order );
 				$order->payment_complete();
 				$order->add_order_note( sprintf( __( 'Paddle Order ID: %s', 'paddle' ), $paddle_order_id ) );
 				$order->add_meta_data( '_paddle_order_id', $paddle_order_id, true );
+				do_action( 'paddle_wc_subscription_payment_succeeded', $id, $subscription_id, $_POST );
 			} else {
-				$subsciption = paddle_wc()->subscriptions->get_item( $id );
-				if ( ! $subsciption || empty( $subsciption->order_id ) ) {
+				$subscription = paddle_wc()->subscriptions->get_item_by( 'subscription_id', $subscription_id );
+				if ( ! $subscription || empty( $subscription->order_id ) ) {
 					if ( paddle_wc()->log_enabled ) {
 						paddle_wc()->log->warning( 'Subscription not found to renew it.', array( 'source' => 'paddle' ) );
 					}
 					return;
 				}
 
-				$order = wc_get_order( $subsciption->order_id );
+				$order = wc_get_order( $subscription->order_id );
 				if ( ! $order || ! $order instanceof WC_Order ) {
 					if ( paddle_wc()->log_enabled ) {
-						paddle_wc()->log->warning( 'Order not found for the subscription #' . absint( $id ) . ' to renew it.', array( 'source' => 'paddle' ) );
+						paddle_wc()->log->warning( 'Order not found for the subscription #' . absint( $subscription->id ) . ' to renew it.', array( 'source' => 'paddle' ) );
 					}
 					return;
 				}
 
-				$new_order = paddle_wc_renew_order( $order, $id, $subscription_id );
+				$new_order = paddle_wc_renew_order( $order, $subscription->id, $subscription_id );
 				if ( $new_order ) {
 					$new_order->add_order_note( sprintf( __( 'Paddle Order ID: %s', 'paddle' ), $paddle_order_id ) );
 					$new_order->add_meta_data( '_paddle_order_id', $paddle_order_id, true );
 					// Update subscription order.
-					paddle_wc()->subscriptions->add( array( 'id' => $id, 'order_id' => $new_order->get_id() ) );
+					paddle_wc()->subscriptions->add( array( 'id' => $subscription->id, 'order_id' => $new_order->get_id() ) );
 				}
+				do_action( 'paddle_wc_subscription_payment_succeeded', $subscription->id, $subscription_id, $_POST );
 			}
-			do_action( 'paddle_wc_subscription_payment_succeeded', $id, $subscription_id, $_POST );
 		} catch ( Exception $e ) {
 			if ( paddle_wc()->log_enabled ) {
                 paddle_wc()->log->error( $e->getMessage(), array( 'source' => 'paddle' ) );
@@ -247,12 +263,12 @@ class Paddle_WC_Webhooks {
 				return;
 			}
 
-			$subsciption = paddle_wc()->subscriptions->get_item( $id );
-			if ( ! $subsciption || empty( $subsciption->order_id ) ) {
+			$subscription = paddle_wc()->subscriptions->get_item( $id );
+			if ( ! $subscription || empty( $subscription->order_id ) ) {
 				return;
 			}
 
-			$order = wc_get_order( $subsciption->order_id );
+			$order = wc_get_order( $subscription->order_id );
 			if ( ! $order || ! $order instanceof WC_Order ) {
 				if ( paddle_wc()->log_enabled ) {
 					paddle_wc()->log->warning( 'Order not found for the subscription #' . absint( $id ) . ' to refund it.', array( 'source' => 'paddle' ) );

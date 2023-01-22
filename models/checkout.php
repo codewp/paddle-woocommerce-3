@@ -54,7 +54,7 @@ class Paddle_WC_Checkout {
 
 		// Order hooks.
 		// add_filter( 'woocommerce_thankyou_order_received_text', array( $this, 'thankyou_order_received_text' ), 99, 2 );
-		add_action( 'woocommerce_order_details_after_order_table', 'order_subscriptions', 11 );
+		add_action( 'woocommerce_order_details_after_order_table', array( $this, 'order_subscriptions' ), 11 );
 	}
 
 	/**
