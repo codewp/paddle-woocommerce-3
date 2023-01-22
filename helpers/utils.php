@@ -58,7 +58,7 @@ function paddle_register_polyfills() {
 	}
 }
 
-function paddle_wc_get_template( $template_name, $args ) {
+function paddle_get_template( $template_name, $args ) {
 	return wc_get_template(
 		$template_name,
 		$args,

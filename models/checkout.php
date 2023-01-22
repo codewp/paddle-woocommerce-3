@@ -52,8 +52,9 @@ class Paddle_WC_Checkout {
 		add_action( 'woocommerce_checkout_create_order', array( $this, 'save_vat_checkout_fields' ) );
 		add_action( 'woocommerce_admin_order_data_after_billing_address', array( $this, 'display_vat_checkout_fields' ) );
 
-		// Order thank you message.
-		add_filter( 'woocommerce_thankyou_order_received_text', array( $this, 'thankyou_order_received_text' ), 99, 2 );
+		// Order hooks.
+		// add_filter( 'woocommerce_thankyou_order_received_text', array( $this, 'thankyou_order_received_text' ), 99, 2 );
+		add_action( 'woocommerce_order_details_after_order_table', 'order_subscriptions', 11 );
 	}
 
 	/**
@@ -267,16 +268,36 @@ class Paddle_WC_Checkout {
 			return $message;
 		}
 
-		$items = $order->get_items();
-		if ( empty( $items ) ) {
-			return $message;
-		}
-
 		if ( paddle_wc_has_order_subscription_items( $order ) ) {
 			return sprintf( __( 'Thank you. Your order has been received and you are subscribed. You can cancel your subscription at any time from %s.', 'paddle' ), '<a href="' . esc_url( wc_get_account_endpoint_url( 'paddle-subscriptions' ) ) . '" target="_blank"><strong>' . __( 'your account', 'paddle' ) . '</strong></a>' );
 		}
 
 		return $message;
+	}
+
+	public function order_subscriptions( $order ) {
+		if ( ! $order ) {
+			return;
+		}
+
+		$subscription = paddle_wc()->subscriptions->get_item_by( 'order_id', $order->get_id() );
+		if ( ! $subscription ) {
+			return;
+		}
+
+		$subscriptions = paddle_wc_get_order_subscription_items( $order );
+		if ( empty( $subscriptions ) ) {
+			return;
+		}
+
+		paddle_get_template(
+			'order/subscriptions.php',
+			array(
+				'order'         => $order,
+				'subscription'  => $subscription,
+				'subscriptions' => $subscriptions,
+			)
+		);
 	}
 
 }

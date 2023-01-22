@@ -28,7 +28,13 @@ do_action( 'woocommerce_email_before_order_subscriptions', $order, $sent_to_admi
 			<?php foreach ( $subscriptions as $item ) : ?>
 				<tr>
 					<td class="td" style="text-align:<?php echo esc_attr( $text_align ); ?>;">
-						<a href="<?php echo esc_url( get_permalink( $item->get_variation_id() ? $item->get_variation_id() : $item->get_product_id() ) ); ?>"><?php echo wp_kses_post( $item->get_name() ); ?></a>
+						<?php
+						$product           = $item->get_product();
+						$is_visible        = $product && $product->is_visible();
+						$product_permalink = apply_filters( 'woocommerce_order_item_permalink', $is_visible ? $product->get_permalink( $item ) : '', $item, $order );
+
+						echo wp_kses_post( apply_filters( 'woocommerce_order_item_name', $product_permalink ? sprintf( '<a href="%s">%s</a>', $product_permalink, $item->get_name() ) : $item->get_name(), $item, $is_visible ) );
+						?>
 					</td>
 				</tr>
 			<?php endforeach; ?>

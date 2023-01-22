@@ -26,7 +26,7 @@ class Paddle_WC_Emails {
 		}
 
 		if ( $plain_text ) {
-			paddle_wc_get_template(
+			paddle_get_template(
 				'emails/plain/email-subscriptions.php',
 				array(
 					'order'         => $order,
@@ -38,7 +38,7 @@ class Paddle_WC_Emails {
 				)
 			);
 		} else {
-			paddle_wc_get_template(
+			paddle_get_template(
 				'emails/email-subscriptions.php',
 				array(
 					'order'         => $order,
