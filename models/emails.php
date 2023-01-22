@@ -16,6 +16,18 @@ class Paddle_WC_Emails {
 			return;
 		}
 
+		$subscribed = false;
+		foreach ( $order->get_items() as $item ) {
+			$product = $item->get_product();
+			if ( $product && ! $product->get_meta( '_paddle_one_off_purchase', true ) ) {
+				$subscribed = true;
+				break;
+			}
+		}
+		if ( ! $subscribed ) {
+			return;
+		}
+
 		if ( $plain_text ) {
 			echo esc_html__( 'You are subscribed, and you can cancel your subscription at any time from your account.', 'paddle' );
 		} else {

@@ -274,7 +274,7 @@ class Paddle_WC_Checkout {
 
 		foreach ( $items as $item ) {
 			$product = $item->get_product();
-			if ( ! $product->get_meta( '_paddle_one_off_purchase', true ) ) {
+			if ( $product && ! $product->get_meta( '_paddle_one_off_purchase', true ) ) {
 				return sprintf( __( 'Thank you. Your order has been received and you are subscribed. You can cancel your subscription at any time from %s.', 'paddle' ), '<a href="' . esc_url( wc_get_account_endpoint_url( 'paddle-subscriptions' ) ) . '" target="_blank"><strong>' . __( 'your account', 'paddle' ) . '</strong></a>' );
 			}
 		}
