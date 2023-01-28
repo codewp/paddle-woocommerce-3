@@ -10,7 +10,10 @@ class Paddle_WC_Emails {
 	public function order_subscriptions( $order, $sent_to_admin = false, $plain_text = false, $email = '' ) {
 		if (
 			! $order->has_status( 'completed' ) ||
-			! is_a( $email, 'WC_Email_Customer_Completed_Order' )
+			(
+				! is_a( $email, 'WC_Email_Customer_Completed_Order' ) &&
+				! is_a( $email, 'WC_Email_New_Order' )
+			)
 		) {
 			return;
 		}
