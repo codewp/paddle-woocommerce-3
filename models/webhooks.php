@@ -54,9 +54,9 @@ class Paddle_WC_Webhooks {
             return;
         }
 
-		$order->payment_complete();
-        $order->add_meta_data( '_paddle_order_id', $paddle_order_id, true );
+		$order->add_meta_data( '_paddle_order_id', $paddle_order_id, true );
         $order->add_order_note( 'Paddle Order ID: ' . $paddle_order_id );
+		$order->payment_complete();
 
 		do_action( 'paddle_wc_payment_succeeded', $order, $paddle_order_id, $_POST );
 
@@ -167,7 +167,7 @@ class Paddle_WC_Webhooks {
 			if ( ! $subscription || empty( $subscription->id ) ) {
 				return;
 			}
-			
+
 			$id = $this->add_subscription( $subscription_id, $_POST );
 			if ( 0 < $id ) {
 				do_action( 'paddle_wc_subscription_cancelled', $id, $subscription_id, $_POST );
@@ -231,6 +231,7 @@ class Paddle_WC_Webhooks {
 					$new_order->add_meta_data( '_paddle_order_id', $paddle_order_id, true );
 					// Update subscription order.
 					paddle_wc()->subscriptions->add( array( 'id' => $subscription->id, 'order_id' => $new_order->get_id() ) );
+					$new_order->payment_complete();
 				}
 				do_action( 'paddle_wc_subscription_payment_succeeded', $subscription->id, $subscription_id, $_POST );
 			}

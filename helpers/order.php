@@ -195,8 +195,6 @@ function paddle_wc_renew_order( $order, $subscription_id = null, $paddle_subscri
 
 	do_action( 'paddle_wc_order_renewed', $new_order, $order, $subscription_id, $paddle_subscription_id );
 
-	$new_order->payment_complete();
-
 	return $new_order;
 }
 
