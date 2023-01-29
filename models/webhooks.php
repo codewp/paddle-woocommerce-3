@@ -104,13 +104,9 @@ class Paddle_WC_Webhooks {
 
 		try {
 			$this->set_status_header( 200 );
-
-			$subscription = paddle_wc()->subscriptions->get_item_by( 'subscription_id', $subscription_id );
-			if ( ! $subscription || empty( $subscription->id ) ) {
-				return;
-			}
-
-			$id = $this->add_subscription( $subscription_id, $_POST );
+			$passthrough = ! empty( $_POST['passthrough'] ) ? sanitize_text_field( $_POST['passthrough'] ) : '';
+			$order       = ! empty( $passthrough ) ? paddle_wc_get_order_by_passthrough( $passthrough ) : false;
+			$id          = $this->add_subscription( $subscription_id, $_POST, $order );
 			if ( 0 < $id ) {
 				do_action( 'paddle_wc_subscription_created', $id, $subscription_id, $_POST );
 			}
