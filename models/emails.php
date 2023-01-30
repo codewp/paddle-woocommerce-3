@@ -4,8 +4,8 @@ defined( 'ABSPATH' ) || exit;
 class Paddle_WC_Emails {
 
 	public function init() {
-		add_action( 'woocommerce_email_order_details', array( __CLASS__, 'order_subscriptions' ), 2, 4 );
-		add_filter( 'woocommerce_email_classes', array( __CLASS__, 'email_classes' ) );
+		add_action( 'woocommerce_email_order_details', array( $this, 'order_subscriptions' ), 2, 4 );
+		add_filter( 'woocommerce_email_classes', array( $this, 'email_classes' ) );
 	}
 
 	public function email_classes( $emails ) {
