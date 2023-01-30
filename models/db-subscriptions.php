@@ -169,8 +169,11 @@ class Paddle_DB_Subscriptions extends Paddle_DB {
 
 		// Search.
 		if ( ! empty( $args['search'] ) ) {
-			$where .= " AND (`order_id` LIKE %s OR LOWER(s.`subscription_id`) LIKE %s OR LOWER(s.`subscription_plan_id`) LIKE %s OR LOWER(s.`paddle_user_id`) LIKE %s OR LOWER(u.`display_name`) LIKE %s OR LOWER(u.`user_email`) LIKE %s)";
-			for ( $i = 0; $i < 6; $i++ ) {
+			$where .= " AND (`order_id` = %s OR s.`id` = %s OR LOWER(s.`subscription_id`) = %s OR LOWER(s.`subscription_plan_id`) = %s OR LOWER(s.`paddle_user_id`) = %s OR LOWER(u.`display_name`) LIKE %s OR LOWER(u.`user_email`) LIKE %s)";
+			for ( $i = 0; $i < 5; $i++ ) {
+				$select_args[] = strtolower( sanitize_text_field( $args['search'] ) );
+			}
+			for ( $i = 0; $i < 2; $i++ ) {
 				$select_args[] = '%' . $wpdb->esc_like( strtolower( sanitize_text_field( $args['search'] ) ) ) . '%';
 			}
 		}
