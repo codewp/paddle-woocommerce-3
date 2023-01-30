@@ -120,6 +120,8 @@ class Paddle_Subscriptions_Controller extends Paddle_Base_Controller {
 		}
 
 		return array(
+			'id'                  => absint( $item->id ),
+			'subscription_id'     => ! empty( $item->subscription_id ) ? sanitize_text_field( $item->subscription_id ) : '',
 			'order_id'            => absint( $order->get_id() ),
 			'order_url'           => $order->get_edit_order_url(),
 			'date'                => wc_format_datetime( $order->get_date_created() ),
@@ -132,6 +134,7 @@ class Paddle_Subscriptions_Controller extends Paddle_Base_Controller {
 			'status'              => ! empty( $item->status ) ? sanitize_text_field( $item->status ) : '',
 			'user_name'           => ! empty( $item->display_name ) ? sanitize_text_field( $item->display_name ) : '',
 			'user_email'          => ! empty( $item->user_email ) ? sanitize_email( $item->user_email ) : '',
+			'payment_method'      => ! empty( $item->payment_method ) ? sanitize_text_field( $item->payment_method ) : '',
 		);
 	}
 
@@ -156,6 +159,7 @@ class Paddle_Subscriptions_Controller extends Paddle_Base_Controller {
 			'cancel_url'          => ! empty( $item->cancel_url ) ? esc_url( $item->cancel_url ) : '',
 			'update_url'          => ! empty( $item->update_url ) ? esc_url( $item->update_url ) : '',
 			'status'              => ! empty( $item->status ) ? sanitize_text_field( $item->status ) : '',
+			'payment_method'      => ! empty( $item->payment_method ) ? sanitize_text_field( $item->payment_method ) : '',
 		);
 	}
 

@@ -4,6 +4,7 @@ import { getSubscriptions } from '@paddle/api/subscriptions';
 import Pagination from './Pagination';
 
 const columns = [
+	{ key: 'id', value: __( 'ID', 'paddle' ) },
 	{ key: 'order-number', value: __( 'Order', 'paddle' ) },
 	{ key: 'user_email', value: __( 'Email', 'paddle' ) },
 	{ key: 'date', value: __( 'Date', 'paddle' ) },
@@ -11,7 +12,7 @@ const columns = [
 	{ key: 'status', value: __( 'Status', 'paddle' ) },
 	{
 		key: 'next_payment_amount',
-		value: __( 'Next Payment Amount', 'paddle' ),
+		value: __( 'Next Amount', 'paddle' ),
 	},
 	{ key: 'actions', value: __( 'Actions', 'paddle' ) },
 ];
@@ -81,6 +82,30 @@ export default function Subscriptions() {
 		}
 
 		return subscription[ key ];
+	};
+
+	const getIdText = ( subscription ) => {
+		if (
+			null != subscription[ 'id' ] &&
+			null != subscription[ 'subscription_id' ] &&
+			0 < subscription[ 'id' ] * 1 &&
+			'' !== subscription[ 'subscription_id' ].trim()
+		) {
+			return (
+				subscription[ 'id' ] * 1 +
+				'-' +
+				subscription[ 'subscription_id' ].trim()
+			);
+		}
+
+		if ( null != subscription[ 'id' ] && 0 < subscription[ 'id' ] * 1 ) {
+			return subscription[ 'id' ] * 1;
+		}
+
+		return 'undefined' !== typeof subscription[ 'subscription_id' ] &&
+			'' !== subscription[ 'subscription_id' ].trim()
+			? subscription[ 'subscription_id' ].trim()
+			: '';
 	};
 
 	const next = ( e ) => {
@@ -174,6 +199,8 @@ export default function Subscriptions() {
 													key
 												}
 											>
+												{ 'id' === key &&
+													getIdText( subscription ) }
 												{ 'order-number' === key && (
 													<a
 														href={
@@ -260,6 +287,7 @@ export default function Subscriptions() {
 													) }
 												{ -1 ===
 													[
+														'id',
 														'order-number',
 														'date',
 														'next_bill_date',
