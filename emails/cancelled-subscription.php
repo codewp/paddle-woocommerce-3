@@ -27,7 +27,7 @@ class Paddle_WC_Email_Cancelled_Subscription extends WC_Email {
 		);
 
 		// Triggers for this email.
-		add_action( 'paddle_wc_subscription_cancelled', array( $this, 'trigger' ) );
+		add_action( 'paddle_wc_subscription_cancelled_notification', array( $this, 'trigger' ) );
 
 		// Call parent constructor.
 		parent::__construct();

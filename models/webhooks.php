@@ -164,10 +164,9 @@ class Paddle_WC_Webhooks {
 				return;
 			}
 
-			$id = $this->add_subscription( $subscription_id, $_POST );
-			if ( 0 < $id ) {
-				do_action( 'paddle_wc_subscription_cancelled', $id, $subscription_id, $_POST );
-			}
+			$this->add_subscription( $subscription_id, $_POST );
+
+			do_action( 'paddle_wc_subscription_cancelled', (int) $subscription->id, $subscription_id, $_POST );
 		} catch ( Exception $e ) {
 			if ( paddle_wc()->log_enabled ) {
                 paddle_wc()->log->error( $e->getMessage(), array( 'source' => 'paddle' ) );

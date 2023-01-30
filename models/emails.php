@@ -6,6 +6,7 @@ class Paddle_WC_Emails {
 	public function init() {
 		add_action( 'woocommerce_email_order_details', array( $this, 'order_subscriptions' ), 2, 4 );
 		add_filter( 'woocommerce_email_classes', array( $this, 'email_classes' ) );
+		add_filter( 'woocommerce_email_actions', array( $this, 'email_actions' ) );
 	}
 
 	public function email_classes( $emails ) {
@@ -14,6 +15,11 @@ class Paddle_WC_Emails {
 		$emails['Paddle_WC_Email_Cancelled_Subscription'] = new Paddle_WC_Email_Cancelled_Subscription();
 
 		return $emails;
+	}
+
+	public function email_actions( $actions ) {
+		$actions[] = 'paddle_wc_subscription_cancelled';
+		return $actions;
 	}
 
 	public function order_subscriptions( $order, $sent_to_admin = false, $plain_text = false, $email = '' ) {
