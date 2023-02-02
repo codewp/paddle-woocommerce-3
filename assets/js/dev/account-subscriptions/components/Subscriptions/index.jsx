@@ -12,7 +12,6 @@ const columns = [
 		key: 'next_payment_amount',
 		value: __( 'Next Payment Amount', 'paddle' ),
 	},
-	{ key: 'payment_method', value: __( 'Method', 'paddle' ) },
 	{ key: 'actions', value: __( 'Actions', 'paddle' ) },
 ];
 
