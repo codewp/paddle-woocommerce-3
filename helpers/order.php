@@ -107,12 +107,6 @@ function paddle_wc_renew_order( $order, $subscription_id = null, $paddle_subscri
 		throw new Exception( 'Order not found.' );
 	}
 
-	$transient = get_transient( '_paddle_renewed_order_' . $order->get_id() );
-	if ( $transient ) {
-		return;
-	}
-	set_transient( '_paddle_renewed_order_' . $order->get_id(), true, HOUR_IN_SECONDS );
-
 	$new_order = wc_create_order(
 		array(
 			'customer_id' => $order->get_customer_id(),
