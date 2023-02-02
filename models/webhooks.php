@@ -222,7 +222,7 @@ class Paddle_WC_Webhooks {
 
 				$new_order = paddle_wc_renew_order( $order, $subscription->id, $subscription_id );
 				if ( $new_order ) {
-					$new_order->add_order_note( sprintf( __( 'Paddle Renewal Order %s Successfull.', 'paddle' ), $paddle_order_id ) );
+					$new_order->add_order_note( sprintf( __( 'Renewal Successfull for Order %s and Paddle Order %s.', 'paddle' ), $order->get_id(), $paddle_order_id ) );
 					$new_order->add_meta_data( '_paddle_order_id', $paddle_order_id, true );
 					// Update subscription order.
 					paddle_wc()->subscriptions->add( array( 'id' => $subscription->id, 'order_id' => $new_order->get_id() ) );
