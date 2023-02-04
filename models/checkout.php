@@ -53,7 +53,7 @@ class Paddle_WC_Checkout {
 		add_action( 'woocommerce_admin_order_data_after_billing_address', array( $this, 'display_vat_checkout_fields' ) );
 
 		// Order hooks.
-		// add_filter( 'woocommerce_thankyou_order_received_text', array( $this, 'thankyou_order_received_text' ), 99, 2 );
+		add_filter( 'woocommerce_thankyou_order_received_text', array( $this, 'thankyou_order_received_text' ), 99, 2 );
 		add_action( 'woocommerce_order_details_after_order_table', array( $this, 'order_subscriptions' ), 11 );
 	}
 
@@ -269,7 +269,7 @@ class Paddle_WC_Checkout {
 		}
 
 		if ( paddle_wc_has_order_subscription_items( $order ) ) {
-			return sprintf( __( 'Thank you. Your order has been received and you are subscribed. You can cancel your subscription at any time from %s.', 'paddle' ), '<a href="' . esc_url( wc_get_account_endpoint_url( 'paddle-subscriptions' ) ) . '" target="_blank"><strong>' . __( 'your account', 'paddle' ) . '</strong></a>' );
+			return $message . '<br/>' . sprintf( __( 'You can cancel your subscription at any time from %s.', 'paddle' ), '<a href="' . esc_url( wc_get_account_endpoint_url( 'paddle-subscriptions' ) ) . '" target="_blank"><strong>' . __( 'your account', 'paddle' ) . '</strong></a>' );
 		}
 
 		return $message;
