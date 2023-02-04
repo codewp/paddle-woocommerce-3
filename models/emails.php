@@ -24,7 +24,7 @@ class Paddle_WC_Emails {
 
 	public function order_subscriptions( $order, $sent_to_admin = false, $plain_text = false, $email = '' ) {
 		if (
-			! $order->has_status( 'completed' ) ||
+			! $order->has_status( array( 'completed', 'processing' ) ) ||
 			(
 				! is_a( $email, 'WC_Email_Customer_Completed_Order' ) &&
 				! is_a( $email, 'WC_Email_New_Order' ) &&
