@@ -7,7 +7,7 @@ class Paddle_WC_Admin_Menu
 	protected $menus = array();
 
 	public function init() {
-		add_action( 'admin_menu', array( $this, 'menus' ) );
+		add_action( 'admin_menu', array( $this, 'menus' ), 99 );
 	}
 
 	/**
@@ -21,14 +21,14 @@ class Paddle_WC_Admin_Menu
 	}
 
 	public function menus() {
-		$this->menus['paddle'] = add_menu_page(
-	        __( 'Paddle', 'paddle' ),
+		$this->menus['paddle'] = add_submenu_page(
+			'woocommerce',
+			__( 'Paddle', 'paddle' ),
             __( 'Paddle', 'paddle' ),
             apply_filters( 'asnp_paddle_menu_capability', 'manage_options' ),
             'asnp-paddle',
-            array( $this, 'create_menu' ),
-            ASNP_PADDLE_WC_PLUGIN_URL . 'assets/images/menu-icon.svg'
-        );
+            array( $this, 'create_menu' )
+		);
 	}
 
 	public function create_menu() {

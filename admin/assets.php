@@ -11,7 +11,7 @@ class Paddle_WC_Admin_Assets {
 		$screen    = get_current_screen();
         $screen_id = $screen ? $screen->id : '';
 
-        if ( 'toplevel_page_asnp-paddle' === $screen_id ) {
+        if ( 'woocommerce_page_asnp-paddle' === $screen_id ) {
 			paddle_register_polyfills();
 
             wp_enqueue_style(
