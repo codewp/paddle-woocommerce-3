@@ -25,7 +25,7 @@ class Paddle_WC_Admin_Menu
 			'woocommerce',
 			__( 'Paddle', 'paddle' ),
             __( 'Paddle', 'paddle' ),
-            apply_filters( 'asnp_paddle_menu_capability', 'manage_options' ),
+            apply_filters( 'asnp_paddle_menu_capability', 'manage_woocommerce' ),
             'asnp-paddle',
             array( $this, 'create_menu' )
 		);
