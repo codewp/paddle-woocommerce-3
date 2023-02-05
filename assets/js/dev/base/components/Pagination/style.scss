@@ -1,0 +1,102 @@
+.asnp-product-pagination {
+	text-align: center;
+	font-weight: 600;
+	font-size: 12px;
+	color: #363636;
+	> span,
+	button {
+		line-height: 25px;
+		min-width: 22px;
+		text-align: center;
+		background: white;
+		margin: 0 1.5px;
+		border: 1px solid #bbc0d4;
+		border-radius: 6px;
+		padding: 0 2px;
+		display: inline-block;
+		text-decoration: none;
+		color: inherit;
+		&:hover {
+			color: #7f54b3;
+			cursor: pointer;
+		}
+		&:focus {
+			outline: unset;
+		}
+		&.current {
+			color: #fff;
+			background: #7f54b3;
+			border-color: #7f54b3;
+		}
+		&.asnp-pagination-prev span {
+			margin-right: 4px;
+		}
+		&.asnp-pagination-next span {
+			margin-left: 4px;
+		}
+	}
+}
+@media only screen and ( min-width: 481px ) {
+	.asnp-product-pagination {
+		font-size: 16px;
+		a,
+		> span,
+		button {
+			line-height: 27px;
+			min-width: 27px;
+			margin: 0 3.5px;
+			padding: 0 6px;
+		}
+	}
+}
+@media only screen and ( min-width: 768px ) {
+	.asnp-product-pagination {
+		font-size: 18px;
+		a,
+		> span,
+		button {
+			line-height: 34px;
+			min-width: 34px;
+			margin: 0 4.5px;
+		}
+	}
+}
+
+@media only screen and ( min-width: 1024px ) {
+	.asnp-product-pagination {
+		font-size: 12px;
+		a,
+		> span,
+		button {
+			line-height: 23px;
+			min-width: 23px;
+			margin: 0 2.5px;
+		}
+	}
+}
+
+@media only screen and ( min-width: 1280px ) {
+	.asnp-product-pagination {
+		font-size: 13px;
+		a,
+		> span,
+		button {
+			line-height: 28px;
+			min-width: 28px;
+			margin: 0 3.5px;
+		}
+	}
+}
+
+@media only screen and ( min-width: 1536px ) {
+	.asnp-product-pagination {
+		font-size: 15px;
+		a,
+		> span,
+		button {
+			line-height: 30px;
+			min-width: 30px;
+			margin: 0 4.5px;
+		}
+	}
+}

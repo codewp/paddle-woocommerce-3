@@ -21,6 +21,7 @@ const externals = {
 
 const aliases = {
 	'@paddle/api': path.resolve( __dirname, 'assets/js/dev/api' ),
+	'@paddle/base': path.resolve( __dirname, 'assets/js/dev/base' ),
 };
 
 const adminConfig = {

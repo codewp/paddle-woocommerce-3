@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { __ } from '@wordpress/i18n';
 import { getAccountSubscriptions } from '@paddle/api/account-subscriptions';
-import Pagination from './Pagination';
+import Pagination from '@paddle/base/components/pagination';
 
 const columns = [
 	{ key: 'order-number', value: __( 'Order', 'paddle' ) },
@@ -237,13 +237,13 @@ export default function Subscriptions() {
 					</tbody>
 				</table>
 			) }
-			{ 0 < subscriptions.length && (
+			{ 0 < subscriptions.length && 1 < pages && (
 				<Pagination
-					pages={ pages }
-					page={ page }
-					next={ next }
-					previous={ previous }
-					disabled={ loading }
+					current={ page }
+					total={ pages }
+					prevText={ __( 'Prev', 'asnp-easy-product-bundles' ) }
+					nextText={ __( 'Next', 'asnp-easy-product-bundles' ) }
+					onClickPage={ ( value ) => setPage( value ) }
 				/>
 			) }
 			{ ! loading && 0 >= subscriptions.length && (

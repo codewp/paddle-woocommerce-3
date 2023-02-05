@@ -143,7 +143,7 @@ class Paddle_DB_Subscriptions extends Paddle_DB {
 			$args['paginate'] = false;
 		}
 
-		$args['orderby'] = ! array_key_exists( $args['orderby'], $this->get_columns() ) ? 'id' : $args['orderby'];
+		$args['orderby'] = ! array_key_exists( $args['orderby'], $this->get_columns() ) ? 's.id' : 's.' . $args['orderby'];
 		$args['orderby'] = esc_sql( $args['orderby'] );
 		$args['order']   = esc_sql( $args['order'] );
 
@@ -151,25 +151,25 @@ class Paddle_DB_Subscriptions extends Paddle_DB {
 		$join        = "LEFT JOIN {$wpdb->prefix}users u ON (s.user_id = u.ID)";
 		$where       = 'WHERE 1=1';
 
-		// Specific conditions.
+		// Specific subscriptions.
 		if ( ! empty( $args['id'] ) ) {
 			if ( is_array( $args['id'] ) ) {
 				$ids = implode( ',', array_map( 'absint', $args['id'] ) );
 			} else {
 				$ids = absint( $args['id'] );
 			}
-			$where .= " AND `id` IN( {$ids} )";
+			$where .= " AND s.`id` IN( {$ids} )";
 		}
 
         // Search by subscription id.
         if ( ! empty( $args['subscription_id'] ) ) {
-            $where .= ' AND LOWER(`subscription_id`) = %s';
+            $where .= ' AND LOWER(s.`subscription_id`) = %s';
             $select_args[] = strtolower( sanitize_text_field( $args['subscription_id'] ) );
         }
 
 		// Search.
 		if ( ! empty( $args['search'] ) ) {
-			$where .= " AND (`order_id` = %s OR s.`id` = %s OR LOWER(s.`subscription_id`) = %s OR LOWER(s.`subscription_plan_id`) = %s OR LOWER(s.`paddle_user_id`) = %s OR LOWER(u.`display_name`) LIKE %s OR LOWER(u.`user_email`) LIKE %s)";
+			$where .= " AND (s.`order_id` = %s OR s.`id` = %s OR LOWER(s.`subscription_id`) = %s OR LOWER(s.`subscription_plan_id`) = %s OR LOWER(s.`paddle_user_id`) = %s OR LOWER(u.`display_name`) LIKE %s OR LOWER(u.`user_email`) LIKE %s)";
 			for ( $i = 0; $i < 5; $i++ ) {
 				$select_args[] = strtolower( sanitize_text_field( $args['search'] ) );
 			}
@@ -180,21 +180,18 @@ class Paddle_DB_Subscriptions extends Paddle_DB {
 
 		// Status.
 		if ( isset( $args['status'] ) ) {
-			$where .= ' AND LOWER(`status`) = %s';
+			$where .= ' AND LOWER(s.`status`) = %s';
             $select_args[] = strtolower( sanitize_text_field( $args['status'] ) );
 		}
 
 		// Select specific user subscriptions.
 		if ( ! empty( $args['user_id' ] ) && 0 < (int) $args['user_id'] ) {
-			$where .= ' AND `user_id` = %d';
+			$where .= ' AND s.`user_id` = %d';
 			$select_args[] = absint( $args['user_id'] );
 		}
 
-		$select_args[] = absint( $args['offset'] );
-		$select_args[] = absint( $args['number'] );
-
-		$items = $wpdb->get_results( $wpdb->prepare( "SELECT s.*, u.display_name, u.user_email FROM $this->table_name s $join $where ORDER BY {$args['orderby']} {$args['order']} LIMIT %d,%d;", $select_args ), $args['output'] );
-		if ( empty( $items ) ) {
+		$total = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM (SELECT DISTINCT s.`$this->primary_key` FROM {$this->table_name} s {$join} {$where} GROUP BY s.`$this->primary_key`) qt", $select_args ) );
+		if ( empty( $total ) || 0 >= (int) $total ) {
 			if ( empty( $args['paginate'] ) ) {
 				return array();
 			}
@@ -206,11 +203,15 @@ class Paddle_DB_Subscriptions extends Paddle_DB {
 			);
 		}
 
+		// Do not append them before $total that causes issue for the $wpdb->prepare on total.
+		$select_args[] = absint( $args['offset'] );
+		$select_args[] = absint( $args['number'] );
+
+		$items = $wpdb->get_results( $wpdb->prepare( "SELECT s.*, u.display_name, u.user_email FROM $this->table_name s $join $where ORDER BY {$args['orderby']} {$args['order']} LIMIT %d,%d;", $select_args ), $args['output'] );
 		if ( empty( $args['paginate'] ) ) {
 			return $items;
 		}
 
-		$total = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM (SELECT DISTINCT s.`$this->primary_key` FROM {$this->table_name} s {$join} {$where} GROUP BY s.`$this->primary_key`) qt" ) );
 		return array(
 			'items' => $items,
 			'total' => absint( $total ),
